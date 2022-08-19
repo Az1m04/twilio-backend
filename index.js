@@ -7,7 +7,7 @@ const cors = require("cors");
 const app = express();
 
 
-var allowedDomains = ['https://dev-01.speedum.tech/', 'http://localhost:3000'];
+var allowedDomains = ['https://dev-01.speedum.tech', 'http://localhost:3000'];
 app.use(cors({
   origin: function (origin, callback) {
     // bypass the requests with no origin (like curl requests, mobile apps, etc )
