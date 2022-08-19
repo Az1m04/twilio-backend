@@ -4,8 +4,13 @@ const bodyParser = require("body-parser");
 const { voiceToken } = require("./tokens");
 const { VoiceResponse } = require("twilio").twiml;
 const cors = require("cors");
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const app = express();
 
+const apiProxy = createProxyMiddleware({
+  target: 'https://test-twilio-backend.herokuapp.com',
+  changeOrigin: true, // for vhosted sites
+});
 
 var allowedDomains = ['https://dev-01.speedum.tech/', 'http://localhost:3000'];
 app.use(cors({
@@ -37,7 +42,7 @@ app.post("/voice/token", (req, res) => {
   sendTokenResponse(token, res);
 });
 
-app.post("/voice", (req, res) => {
+app.post(apiProxy("/voice", (req, res) => {
   // console.log('VOICE>>>>',req)
   const To = req.body.To;
   const response = new VoiceResponse();
@@ -45,7 +50,7 @@ app.post("/voice", (req, res) => {
   dial.number(To);
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
-});
+}));
 
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity;
@@ -54,13 +59,13 @@ app.get("/voice/token", (req, res) => {
   sendTokenResponse(token, res);
 });
 
-app.post("/voice/incoming", (req, res) => {
+app.post(apiProxy("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
   dial.client("phil");
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
-});
+}));
 
 const port = process.env.PORT || 8888;
 
