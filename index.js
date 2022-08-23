@@ -39,12 +39,17 @@ app.post("/voice/token", (req, res) => {
 
 app.post("/voice", (req, res) => {
   // console.log('VOICE>>>>',req)
+try{
   const To = req.body.To;
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: config.callerId });
   dial.number(To);
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
+} 
+  catch (e)=>{
+  res.send(e.message)
+  }
 });
 
 app.get("/voice/token", (req, res) => {
