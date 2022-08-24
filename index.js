@@ -58,7 +58,8 @@ app.post("/voice/incoming", (req, res) => {
   response.say({ voice: 'alice' }, 'Welcome to telehealth');
 const gather=response.gather({
   input:'dtmf',
-  action:'/results'
+  action:'/results',
+  timeout: 'auto',
 })
 gather.say(' if you know the extenstion then dial else press  0 to talk to our agent')
 //   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
@@ -73,6 +74,8 @@ app.all("/results", (req, res) => {
  switch (req.body.Digits){
    case '1':
      response.say('You selected option 1.');
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
+  dial.client('18');
      break;
      case '2':
      response.say('You selected option 2.');
