@@ -55,14 +55,35 @@ app.get("/voice/token", (req, res) => {
 
 app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
-  response.say({ voice: 'alice' }, 'Welcome to telehealth   if you know the extenstion then dial else press  0 to talk to our agent');
-
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
-  dial.client("phil");
-
+  response.say({ voice: 'alice' }, 'Welcome to telehealth');
+const gather=response.gather({
+  input:'dtmf',
+  action:'/results'
+})
+gather.say(' if you know the extenstion then dial else press  0 to talk to our agent')
+//   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
+//   dial.client("phil");
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
 });
+
+app.all("/results", (req, res) => .{
+  const userInput = req.body.Digits;
+  const response = new VoiceResponse();
+ switch (req.body.Digits){
+   case '1':
+     response.say('You selected option 1.');
+     break;
+     case '2':
+     response.say('You selected option 2.');
+     break;
+   default:
+      response.say("Sorry, I don't undersatand that coice.");
+     const gather=response.gather({input:'dtmf'});
+     gather.say(' if you know the extenstion then dial else press  0 to talk to our agent');
+     break;  
+}
+}
 
 const port = process.env.PORT || 8888;
 
