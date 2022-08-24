@@ -50,14 +50,16 @@ app.post("/voice", (req, res) => {
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity;
   const token = voiceToken(identity, config);
-  console.log('token', token)
   sendTokenResponse(token, res);
 });
 
 app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
+  response.say({ voice: 'alice' }, 'Welcome to telehealth if uou know the extenstion then dial or press 0 to talk to our agent');
+
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
   dial.client("phil");
+
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
 });
