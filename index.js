@@ -67,7 +67,7 @@ gather.say(' if you know the extenstion then dial else press  0 to talk to our a
   res.send(response.toString());
 });
 
-app.all("/results", (req, res) => .{
+app.all("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
  switch (req.body.Digits){
@@ -83,7 +83,7 @@ app.all("/results", (req, res) => .{
      gather.say(' if you know the extenstion then dial else press  0 to talk to our agent');
      break;  
 }
-}
+});
 
 const port = process.env.PORT || 8888;
 
