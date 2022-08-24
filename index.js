@@ -80,7 +80,7 @@ app.all("/results", (req, res) => {
    default:
       response.say("Sorry, I don't undersatand that choice.");
      const gather=response.gather({input:'dtmf'});
-     gather.say({ voice: 'alice' }).prosody({rate: '85%'},"Thank you for calling Health Vault. Please dial the extension if you know or dial 0 to talk to our agent.")
+     gather.say({ voice: 'alice' }).prosody({rate: '60%'},"Thank you for calling Health Vault. Please dial the extension if you know or dial 0 to talk to our agent.")
      break;  
 }
 res.send(response.toString());
