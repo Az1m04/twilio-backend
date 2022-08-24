@@ -61,9 +61,7 @@ const gather=response.gather({
   action:'/results',
   timeout: 'auto',
 })
-gather.say(' if you know the extenstion then dial else press  0 to talk to our agent')
-//   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
-//   dial.client("phil");
+  gather.say(' if you know the extenstions then dial else press 0 to talk to our agent')
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
 });
@@ -72,18 +70,18 @@ app.all("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
  switch (req.body.Digits){
-   case '1':
+   case '0':
      response.say('You selected option 1.');
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
-  dial.client('18');
+     const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
+     dial.client('18');
      break;
-     case '2':
+     case '1':
      response.say('You selected option 2.');
      break;
    default:
       response.say("Sorry, I don't undersatand that coice.");
      const gather=response.gather({input:'dtmf'});
-     gather.say(' if you know the extenstion then dial else press  0 to talk to our agent');
+     gather.say(' if you know the extenstions then dial else press 0 to talk to our agent');
      break;  
 }
 res.send(response.toString());
