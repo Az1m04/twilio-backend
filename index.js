@@ -70,12 +70,12 @@ app.all("/results", (req, res) => {
   const response = new VoiceResponse();
  switch (req.body.Digits){
    case '0':
-     response.say('You selected option 1.');
+     response.say('You have dialed 0.');
      const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
      dial.client('18');
      break;
      case '1':
-     response.say('You selected option 2.');
+     response.say('You selected option 1.');
      break;
    default:
       response.say("Sorry, I don't undersatand that coice.");
