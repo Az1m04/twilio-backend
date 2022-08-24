@@ -83,6 +83,7 @@ app.all("/results", (req, res) => {
      gather.say(' if you know the extenstion then dial else press  0 to talk to our agent');
      break;  
 }
+res.send(response.toString());
 });
 
 const port = process.env.PORT || 8888;
