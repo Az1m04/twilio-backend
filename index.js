@@ -55,7 +55,7 @@ app.get("/voice/token", (req, res) => {
 
 app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
-  response.say({ voice: 'alice' }, 'Welcome to telehealth ,,,, if uou know the ,,, extenstion ,,, then dial else ,,, press,,,0 ,,,, to talk to our ,,, agent');
+  response.say({ voice: 'alice' }, 'Welcome to telehealth ,,,, if you ,, know the ,,, extenstion ,,, then dial else ,,, press,,,0 ,,,, to talk to our ,,, agent');
 
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
   dial.client("phil");
