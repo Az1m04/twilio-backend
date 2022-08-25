@@ -82,7 +82,7 @@ app.all("/results", (req, res) => {
      break;
      case '100':
       response.say('You have dialed 100.');
-      dial.client('17');
+      dial.client('9');
      break;
    default:
       response.say("Sorry, I don't undersatand that choice.");
