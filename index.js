@@ -60,7 +60,9 @@ const gather=response.gather({
   action:'/results',
   timeout: 'auto',
 })
-gather.say({ voice: 'alice' }).prosody({rate: '65%'},"Thank you for calling Health Vault. Please dial the extension if you know or dial 0 to talk to our agent.")
+response.say({voice:'alice'},"Thank you for calling Health Vault.")
+response.pause({length:2})
+gather.say({ voice: 'alice' },"Please dial the extension if you know or dial 0 to talk to our agent.")
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
 });
@@ -74,8 +76,9 @@ app.all("/results", (req, res) => {
      const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
      dial.client('18');
      break;
-     case '1':
-     response.say('You selected option 1.');
+     case '100':
+      const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
+      dial.client('17');
      break;
    default:
       response.say("Sorry, I don't undersatand that choice.");
