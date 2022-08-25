@@ -8,7 +8,6 @@ const app = express();
 
 
 var allowedDomains = ['https://dev-01.speedum.tech', 'http://localhost:3000'];
-var ID="";
 app.use(cors({
   origin: function (origin, callback) {
     // bypass the requests with no origin (like curl requests, mobile apps, etc )
@@ -51,7 +50,6 @@ app.post("/voice", (req, res) => {
 
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity;
-  ID=identity;
   const token = voiceToken(identity, config);
   sendTokenResponse(token, res);
 });
@@ -77,20 +75,11 @@ app.post("/results", (req, res) => {
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
  switch (req.body.Digits){
    case '0':
-     dial.client(
-      // { 
-      //   statusCallback: '/calls/events',
-      //   statusCallbackMethod: 'POST'
-      // } ,
-  ID)
-  response.say("Thanks for reaching us. Currently no agents available.")
-
+     dial.client('15')
      break;
      case '100':
       dial.client('17');
-      response.say("Thanks for reaching us. Currently no agents available.")
       break;
-    
    default:
       response.say("Sorry, I don't undersatand that choice.");
     break;
