@@ -100,6 +100,17 @@ res.send(response.toString());
 app.post("/calls/events", (req, res) => {
   const response = new VoiceResponse();
   console.log(req.body,"req")
+  switch (req.body.CallStatus){
+    case 'no-answere':
+      response.say("Thanks for reaching us. Currently no agents available.")
+      break;
+      case 'busy':
+        response.say("Lines are busy.")
+       break;
+    default:
+       response.say("We are currently offilne.");
+     break;
+ }
 res.send(response.toString());
 });
 
