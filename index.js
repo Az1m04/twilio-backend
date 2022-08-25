@@ -78,11 +78,12 @@ app.post("/results", (req, res) => {
  switch (req.body.Digits){
    case '0':
      dial.client(
-      { 
-        statusCallback: '/calls/events',
-        statusCallbackMethod: 'POST'
-      } 
-  ,ID)
+      // { 
+      //   statusCallback: '/calls/events',
+      //   statusCallbackMethod: 'POST'
+      // } ,
+  ID)
+  response.say("Thanks for reaching us. Currently no agents available.")
 
      break;
      case '100':
@@ -97,11 +98,11 @@ res.send(response.toString());
 });
 
 
-app.post("/calls/events", (req, res) => {
-  const response = new VoiceResponse();
-  response.say("Thanks for reaching us. Currently no agents available.")
-  res.send(response.toString());
-});
+// app.post("/calls/events", (req, res) => {
+//   const response = new VoiceResponse();
+//   response.say("Thanks for reaching us. Currently no agents available.")
+//   res.send(response.toString());
+// });
 
 const port = process.env.PORT || 8888;
 
