@@ -8,6 +8,7 @@ const app = express();
 
 
 var allowedDomains = ['https://dev-01.speedum.tech', 'http://localhost:3000'];
+var ID="";
 app.use(cors({
   origin: function (origin, callback) {
     // bypass the requests with no origin (like curl requests, mobile apps, etc )
@@ -49,11 +50,13 @@ app.post("/voice", (req, res) => {
 
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity;
+  ID=identity;
   const token = voiceToken(identity, config);
   sendTokenResponse(token, res);
 });
 
 app.post("/voice/incoming", (req, res) => {
+  console.log(ID,req.body.identity)
   const response = new VoiceResponse();
   response.say({voice:'alice'},"Thank you for calling Health Vault.")
   response.pause({length:2})
