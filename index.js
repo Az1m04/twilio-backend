@@ -60,7 +60,7 @@ const gather=response.gather({
   action:'/results',
   timeout: 'auto',
 })
-gather.say({ voice: 'alice' }).prosody({rate: '85%'},"Thank you for calling Health Vault. Please dial the extension if you know or dial 0 to talk to our agent.")
+gather.say({ voice: 'alice' }).prosody({rate: '65%'},"Thank you for calling Health Vault. Please dial the extension if you know or dial 0 to talk to our agent.")
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
 });
