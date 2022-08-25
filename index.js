@@ -70,14 +70,13 @@ const gather=response.gather({
 app.all("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
  switch (req.body.Digits){
    case '0':
      response.say('You have dialed 0.');
-     const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
      dial.client('18');
      break;
      case '100':
-      const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
       dial.client('17');
      break;
    default:
