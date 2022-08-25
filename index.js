@@ -99,7 +99,7 @@ res.send(response.toString());
 
 app.post("/calls/events", (req, res) => {
   const response = new VoiceResponse();
-  console.log(req,"req")
+  console.log(req.body,"req")
 res.send(response.toString());
 });
 
