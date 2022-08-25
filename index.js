@@ -77,6 +77,7 @@ app.all("/results", (req, res) => {
      dial.client('18');
      break;
      case '100':
+      response.say('You have dialed 100.');
       dial.client('17');
      break;
    default:
