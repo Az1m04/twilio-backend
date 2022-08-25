@@ -77,18 +77,13 @@ app.all("/results", (req, res) => {
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
  switch (req.body.Digits){
    case '0':
-     response.say('You have dialed 0.');
-     dial.client(ID);
-     response.say('Goodbye');
-     break;
+     return dial.client(ID);
      case '100':
-      response.say('You have dialed 100.');
-      dial.client('17');
-      response.say('Goodbye');
-     break;
+     return  dial.client('17');
+    
    default:
-      response.say("Sorry, I don't undersatand that choice.");
-     break;  
+     return response.say("Sorry, I don't undersatand that choice.");
+   
 }
 res.send(response.toString());
 });
