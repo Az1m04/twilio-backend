@@ -77,7 +77,7 @@ app.post("/results", (req, res) => {
      dial.client({
       statusCallbackEvent: 'initiated ringing answered completed',
       statusCallback: '/calls/events',
-      statusCallbackMethod: 'POST'
+      statusCallbackMethod: 'GET'
      },'15')
      break;
      case '100':
@@ -91,7 +91,7 @@ res.send(response.toString());
 });
 
 
-app.post("/calls/events", (req, res) => {
+app.get("/calls/events", (req, res) => {
   console.log(req.body.CallStatus)
   const response = new VoiceResponse();
    if(req.body.CallStatus==='no-answer'){
