@@ -74,30 +74,17 @@ app.post("/results", (req, res) => {
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
  switch (req.body.Digits){
    case '0':
-     dial.client({
-      statusCallbackEvent: 'initiated ringing answered completed',
-      statusCallback: '/calls/events',
-      statusCallbackMethod: 'GET'
-     },'15')
+     dial.client('15')
      break;
      case '100':
       dial.client('17');
       break;
-   default:
+    default:
       response.say("Sorry, I don't undersatand that choice.");
+      gather.say({ voice: 'alice' },"Please dial the extension if you know or dial 0 to talk to our agent.")
     break;
 }
 res.send(response.toString());
-});
-
-
-app.get("/calls/events", (req, res) => {
-  console.log(req.body.CallStatus)
-  const response = new VoiceResponse();
-   if(req.body.CallStatus==='no-answer'){
-       response.say("user is not answering")
- }
-  res.send(response.toString());
 });
 
 const port = process.env.PORT || 8888;
