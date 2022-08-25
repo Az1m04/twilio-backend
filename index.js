@@ -74,7 +74,12 @@ app.post("/results", (req, res) => {
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
  switch (req.body.Digits){
    case '0':
-     dial.client('15')
+     dial.client({
+      statusCallbackEvent: 'initiated ringing answered completed',
+      statusCallback: '/calls/events',
+      statusCallbackMethod: 'POST'
+
+     },'15')
      break;
      case '100':
       dial.client('17');
@@ -87,11 +92,12 @@ res.send(response.toString());
 });
 
 
-// app.post("/calls/events", (req, res) => {
-//   const response = new VoiceResponse();
-//   response.say("Thanks for reaching us. Currently no agents available.")
-//   res.send(response.toString());
-// });
+app.post("/calls/events", (req, res) => {
+   console.log(req.body,req.body.callStatus)
+  const response = new VoiceResponse();
+   
+  res.send(response.toString());
+});
 
 const port = process.env.PORT || 8888;
 
