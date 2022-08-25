@@ -71,14 +71,19 @@ const gather=response.gather({
   res.send(response.toString());
 });
 
-app.all("/results", (req, res) => {
+app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
  switch (req.body.Digits){
    case '0':
-     dial.client(ID);
-  
+     dial.client(
+      { 
+        statusCallback: '/calls/events',
+        statusCallbackMethod: 'POST'
+      } 
+  ,ID)
+
      break;
      case '100':
       dial.client('17');
@@ -88,6 +93,13 @@ app.all("/results", (req, res) => {
       response.say("Sorry, I don't undersatand that choice.");
     break;
 }
+res.send(response.toString());
+});
+
+
+app.post("/calls/events", (req, res) => {
+  const response = new VoiceResponse();
+  console.log(req,"req")
 res.send(response.toString());
 });
 
