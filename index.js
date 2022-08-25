@@ -88,6 +88,7 @@ app.post("/results", (req, res) => {
      break;
      case '100':
       dial.client('17');
+      response.say("Thanks for reaching us. Currently no agents available.")
       break;
     
    default:
