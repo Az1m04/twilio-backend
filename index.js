@@ -55,7 +55,6 @@ app.get("/voice/token", (req, res) => {
 });
 
 app.post("/voice/incoming", (req, res) => {
-  console.log(  ID,">>> ID",req.body.identity,">>>> INDETIDY")
   const response = new VoiceResponse();
   response.say({voice:'alice'},"Thank you for calling Health Vault.")
   response.pause({length:2})
