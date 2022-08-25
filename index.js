@@ -55,14 +55,14 @@ app.get("/voice/token", (req, res) => {
 
 app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
+  response.say({voice:'alice'},"Thank you for calling Health Vault.")
+  response.pause({length:2})
 const gather=response.gather({
   input:'dtmf',
   action:'/results',
   timeout: 'auto',
 })
-response.say({voice:'alice'},"Thank you for calling Health Vault.")
-response.pause({length:2})
-gather.say({ voice: 'alice' },"Please dial the extension if you know or dial 0 to talk to our agent.")
+  gather.say({ voice: 'alice' },"Please dial the extension if you know or dial 0 to talk to our agent.")
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
 });
