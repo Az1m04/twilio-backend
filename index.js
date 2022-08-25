@@ -101,7 +101,7 @@ app.post("/calls/events", (req, res) => {
   const response = new VoiceResponse();
   console.log(req.body,"req")
   switch (req.body.CallStatus){
-    case 'no-answere':
+    case 'no-answer':
       response.say("Thanks for reaching us. Currently no agents available.")
       break;
       case 'busy':
