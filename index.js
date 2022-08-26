@@ -58,7 +58,7 @@ app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
   response.say({voice:'alice'},"Thank you for calling Health Vault.")
   response.pause({length:2})
-const gather=response.gather({
+  const gather=response.gather({
   input:'dtmf',
   action:'/results',
   timeout: 'auto',
@@ -75,7 +75,10 @@ app.post("/results", (req, res) => {
  switch (req.body.Digits){
    case '0':
 
-    dial.client('15')
+    dial.client({
+      action:'/calls/events'
+      
+    },'15')
     response.say('"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.');
     response.record({
         action: "/voicemail",
@@ -96,11 +99,13 @@ res.send(response.toString());
 });
 
 
-// app.post("/calls/events", (req, res) => {
-//   const response = new VoiceResponse();
-//   response.say("Thanks for reaching us. Currently no agents available.")
-//   res.send(response.toString());
-// });
+app.post("/calls/events", (req, res) => {
+  console.log(req.body,"CLIENT>>>")
+  // const response = new VoiceResponse();
+  // response.say("Thanks for reaching us. Currently no agents available.")
+  // res.send(response.toString());
+});
+
 app.all("/voicemail",(req,res)=>{
   console.log(req.body,">>?")
   const response = new VoiceResponse();
