@@ -101,7 +101,7 @@ app.post("/handleDialCallStatus", (req, res) => {
   "no-answer",
   "canceled",
   "failed"]
-  if (!badStatusCodes.includes(req.CallStatus))
+  if (!badStatusCodes.includes(req.body.CallStatus))
   { 
    return  res.send(response.toString())
   }
