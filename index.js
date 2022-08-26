@@ -50,7 +50,7 @@ app.post("/voice", (req, res) => {
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity;
    onlineClients.push(identity)
-   const unique= [...new Set(map(v=>v))]
+   const unique= [...new Set(onlineClients?.map(v=>v))]
    onlineClients=unique
    console.log(onlineClients,"UNIQUE")
 
