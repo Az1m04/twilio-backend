@@ -52,8 +52,6 @@ app.get("/voice/token", (req, res) => {
    onlineClients.push(identity)
    const unique= [...new Set(onlineClients?.map(v=>v))]
    onlineClients=unique
-   console.log(onlineClients,"UNIQUE")
-
   const token = voiceToken(identity, config);
   sendTokenResponse(token, res);
 });
@@ -64,7 +62,6 @@ app.get("/voice/removetoken", (req, res) => {
     return item !== identity
    })
   onlineClients=arr
-  console.log(onlineClients,"UPDATED")
   res.send({
     returnCode: "true"
   })
@@ -96,22 +93,21 @@ app.post("/results", (req, res) => {
   method: 'POST'});
  switch (req.body.Digits){
    case '0':
-    console.log(onlineClients,"onlineClients")
       if(onlineClients?.includes('15')){
         dial.client('15')
      }
      else {
-      const gather=response.gather()
-      gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
-      response.record({
-        action: "/voicemail",
-        playBeep: true,
-        finishOnKey: '*'
-       });
+      callFallback()
      }
+      
      break;
      case '100':
-      dial.client('17');
+      if(onlineClients?.includes('17')){
+        dial.client('17')
+        }
+      else {
+        callFallback()
+       }
       break;
    default:
       response.say("Sorry, I don't undersatand that choice.");
@@ -151,6 +147,18 @@ app.all("/voicemail",(req,res)=>{
   response.hangup();
   res.send(response.toString())
 })
+
+
+export const callFallback=()=>{
+  const gather=response.gather()
+  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+  response.record({
+    action: "/voicemail",
+    playBeep: true,
+    finishOnKey: '*'
+   });
+ }
+
 
 const port = process.env.PORT || 8888;
 
