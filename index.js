@@ -54,6 +54,15 @@ app.get("/voice/token", (req, res) => {
   sendTokenResponse(token, res);
 });
 
+app.get("/voice/removetoken", (req, res) => {
+  const identity = req.query.identity;
+  arr = arr.filter((item)=> {
+    return item !== identity
+   })
+  onlineClients=arr
+  const token = voiceToken(identity, config);
+  sendTokenResponse(token, res);
+});
 
 app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
