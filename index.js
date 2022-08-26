@@ -105,25 +105,45 @@ app.post("/calls/events", (req, res) => {
 app.post("/handleDialCallStatus", (req, res) => {
   console.log(req.body.CallStatus,"STATUS>>>")
   const response = new VoiceResponse();
+  const badStatusCodes=["busy",
+  "no-answer",
+  "canceled",
+  "failed"]
+  if (!badStatusCodes.includes(req.CallStatus))
+  {
+      return  res.send(response.toString())
+  }
+
   const gather=response.gather({
     input:'dtmf',
-    action:'/results',
-    timeout: 'auto',
+    action:'/voiceCallbacks',
   })
-  // switch(req.body.CallStatus){
-  //   case 'no-answer':
-  //       response.say('"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.');
-  //       response.record({
-  //       action: "/voicemail",
-  //       playBeep: true,
-  //       finishOnKey: '*'
-  //   });
-  //   response.say('I did not receive a recording');
-  //     default:
-  //       break;
-  // }
+  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+  res.set("Content-Type", "text/xml");
   res.send(response.toString())
 });
+
+app.post("/voiceCallbacks", (req, res) => {
+  const userInput = req.body.Digits;
+  const response = new VoiceResponse();
+ switch (req.body.Digits){
+   case '0':
+            response.record({
+                     action: "/voicemail",
+                     playBeep: true,
+                     finishOnKey: '*'
+                    });
+    case '1': 
+             response.Say("Goodbye!").Hangup();
+             break;
+    default:
+             response.say('I did not receive a recording');
+             break;
+}
+res.send(response.toString());
+});
+
+
 
 app.all("/voicemail",(req,res)=>{
   console.log(req.body,">>?")
