@@ -71,8 +71,8 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true ,   action: '/handleDialCallStatus',
-  method: 'GET'});
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10 ,   action: '/handleDialCallStatus',
+  method: 'POST'});
  switch (req.body.Digits){
    case '0':
 
@@ -102,9 +102,10 @@ app.post("/calls/events", (req, res) => {
   res.send(response.toString())
 });
 
-app.get("/handleDialCallStatus", (req, res) => {
-  console.log(req.body,"STATUS>>>")
+app.post("/handleDialCallStatus", (req, res) => {
+  console.log(req.body.CallStatus,"STATUS>>>")
   const response = new VoiceResponse();
+  response.say("LINE OUT OF SERVICE")
   res.send(response.toString())
 });
 
