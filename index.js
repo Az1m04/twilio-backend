@@ -104,6 +104,8 @@ app.all("/voicemail",(req,res)=>{
   console.log(req.body.RecordingUrl,">>?")
   const response = new VoiceResponse();
   response.say("Thank you for your message. Good bye.");
+  response.hangup();
+  res.send(response.toString())
 })
 
 const port = process.env.PORT || 8888;
