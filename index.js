@@ -81,6 +81,7 @@ app.post("/results", (req, res) => {
   method: 'POST'});
  switch (req.body.Digits){
    case '0':
+    console.log(onlineClients,"onlineClients")
       if(onlineClients?.includes('15')){
         dial.client('15')
      }
