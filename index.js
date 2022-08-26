@@ -75,7 +75,6 @@ app.post("/results", (req, res) => {
  switch (req.body.Digits){
    case '0':
     response.say('Please leave a message at the beep.\nPress the star key when finished.');
-`;
     response.record({
         action: "/voicemail",
         maxLength: 20,
@@ -101,9 +100,6 @@ res.send(response.toString());
 //   response.say("Thanks for reaching us. Currently no agents available.")
 //   res.send(response.toString());
 // });
-
-
-
 app.all("/voicemail",(req,res)=>{
   console.log(req.body,">>?")
   let twiml = new Twilio.twiml.VoiceResponse();
