@@ -71,7 +71,7 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10 ,   action: '/handleDialCallStatus',
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action: '/handleDialCallStatus',
   method: 'POST'});
  switch (req.body.Digits){
    case '0':
@@ -117,34 +117,17 @@ app.post("/handleDialCallStatus", (req, res) => {
       return  res.send(response.toString())
   }
   console.log("GOOD")
-  const gather=response.gather({
-    input:'dtmf',
-    action:'/voiceCallbacks',
-  })
+  const gather=response.gather()
   gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+  response.record({
+    action: "/voicemail",
+    playBeep: true,
+    finishOnKey: '*'
+   });
   res.set("Content-Type", "text/xml");
   res.send(response.toString())
 });
 
-app.post("/voiceCallbacks", (req, res) => {
-  const userInput = req.body.Digits;
-  const response = new VoiceResponse();
- switch (req.body.Digits){
-   case '0':
-            response.record({
-                     action: "/voicemail",
-                     playBeep: true,
-                     finishOnKey: '*'
-                    });
-    case '1': 
-             response.Say("Goodbye!").Hangup();
-             break;
-    default:
-             response.say('I did not receive a recording');
-             break;
-}
-res.send(response.toString());
-});
 
 
 
