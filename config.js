@@ -23,6 +23,7 @@ cfg.callerId = process.env.TWILIO_CALLER_ID;
 cfg.apiKey = process.env.TWILIO_API_KEY;
 cfg.apiSecret = process.env.TWILIO_API_SECRET;
 cfg.incomingAllow = true;
+cfg.authToken=process.env.AUTH_TOKEN
 
 // Export configuration object
 module.exports = cfg;

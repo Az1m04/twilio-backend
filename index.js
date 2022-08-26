@@ -5,7 +5,7 @@ const { voiceToken } = require("./tokens");
 const { VoiceResponse } = require("twilio").twiml;
 const cors = require("cors");
 const app = express();
-const client = require('twilio')(accountSid, authToken);
+const client = require('twilio')(config.accountSid, config.authToken);
 
 
 var allowedDomains = ['https://dev-01.speedum.tech', 'http://localhost:3000'];
