@@ -5,7 +5,7 @@ const { voiceToken } = require("./tokens");
 const { VoiceResponse } = require("twilio").twiml;
 const cors = require("cors");
 const app = express();
-
+var onlineClients=[];
 
 var allowedDomains = ['https://dev-01.speedum.tech', 'http://localhost:3000'];
 app.use(cors({
@@ -33,7 +33,7 @@ const sendTokenResponse = (token, res) => {
 
 app.post("/voice/token", (req, res) => {
   const identity = req.body.identity;
-
+  onlineClients.push(identity)
   const token = voiceToken(identity, config);
   sendTokenResponse(token, res);
 });
@@ -77,11 +77,22 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action: '/handleDialCallStatus',
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,
   method: 'POST'});
  switch (req.body.Digits){
    case '0':
-     dial.client('15')
+      if(onlineClients?.includes('15')){
+        dial.client('15')
+     }
+     else {
+      const gather=response.gather()
+      gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+      response.record({
+        action: "/voicemail",
+        playBeep: true,
+        finishOnKey: '*'
+       });
+     }
      break;
      case '100':
       dial.client('17');
@@ -112,13 +123,7 @@ app.post("/handleDialCallStatus", (req, res) => {
   { 
    return  res.send(response.toString())
   }
-  const gather=response.gather()
-  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
-  response.record({
-    action: "/voicemail",
-    playBeep: true,
-    finishOnKey: '*'
-   });
+
   res.set("Content-Type", "text/xml");
   res.send(response.toString())
 });
