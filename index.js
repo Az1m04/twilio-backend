@@ -33,7 +33,7 @@ const sendTokenResponse = (token, res) => {
 
 app.post("/voice/token", (req, res) => {
   const identity = req.body.identity;
-  onlineClients=identity
+  console.log("TOKEN -1 ")
   const token = voiceToken(identity, config);
   sendTokenResponse(token, res);
 });
@@ -50,6 +50,8 @@ app.post("/voice", (req, res) => {
 
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity;
+  console.log("TOKEN -2 ")
+  onlineClients=identity
   const token = voiceToken(identity, config);
   sendTokenResponse(token, res);
 });
