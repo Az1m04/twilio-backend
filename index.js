@@ -70,7 +70,7 @@ app.post("/voice/incoming", (req, res) => {
 
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
-  console.log(req.body,"BODY")
+
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action: '/handleDialCallStatus',
   method: 'POST'});
@@ -100,6 +100,7 @@ app.post("/handleDialCallStatus", (req, res) => {
   const badStatusCodes=["busy",
   "no-answer",
   "canceled",
+  "in-progress",
   "failed"]
   if (!badStatusCodes.includes(req.body.CallStatus))
   { 
