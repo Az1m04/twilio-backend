@@ -76,9 +76,10 @@ app.post("/results", (req, res) => {
    case '0':
 
     dial.client({
-      action:'/calls/events'
+      statusCallback: '/callsevents',
+      statusCallbackMethod: 'POST',
       
-    },'15')
+    },'15').then(res=>console.log(res))
     response.say('"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.');
     response.record({
         action: "/voicemail",
@@ -101,9 +102,7 @@ res.send(response.toString());
 
 app.post("/calls/events", (req, res) => {
   console.log(req.body,"CLIENT>>>")
-  // const response = new VoiceResponse();
-  // response.say("Thanks for reaching us. Currently no agents available.")
-  // res.send(response.toString());
+   return req.body
 });
 
 app.all("/voicemail",(req,res)=>{
