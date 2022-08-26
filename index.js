@@ -74,7 +74,15 @@ app.post("/results", (req, res) => {
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true });
  switch (req.body.Digits){
    case '0':
-     dial.client('15')
+    response.say('Please leave a message at the beep.\nPress the star key when finished.');
+    response.record({
+        action: 'http://foo.edu/handleRecording.php',
+        method: 'GET',
+        maxLength: 20,
+        finishOnKey: '*'
+    });
+    response.say('I did not receive a recording');
+    //  dial.client('15')
      break;
      case '100':
       dial.client('17');
