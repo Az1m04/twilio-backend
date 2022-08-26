@@ -76,7 +76,7 @@ app.post("/results", (req, res) => {
    case '0':
 
     dial.client({
-      statusCallback: '/callsevents',
+      statusCallback: '/calls/events',
       statusCallbackMethod: 'POST',
       
     },'15')
