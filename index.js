@@ -5,7 +5,6 @@ const { voiceToken } = require("./tokens");
 const { VoiceResponse } = require("twilio").twiml;
 const cors = require("cors");
 const app = express();
-const client = require('twilio')(config.accountSid, config.authToken);
 
 
 var allowedDomains = ['https://dev-01.speedum.tech', 'http://localhost:3000'];
@@ -77,16 +76,7 @@ app.post("/results", (req, res) => {
   method: 'POST'});
  switch (req.body.Digits){
    case '0':
-     console.log(client,">>>CLIENT")
-    dial.client('15')
-    // response.say('"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.');
-    // response.record({
-    //     action: "/voicemail",
-    //     playBeep: true,
-    //     finishOnKey: '*'
-    // });
-    // response.say('I did not receive a recording');
-
+     dial.client('15')
      break;
      case '100':
       dial.client('17');
@@ -111,8 +101,6 @@ app.post("/handleDialCallStatus", (req, res) => {
   "no-answer",
   "canceled",
   "failed"]
-
-
   if (!badStatusCodes.includes(req.CallStatus))
   { 
    return  res.send(response.toString())
