@@ -75,9 +75,11 @@ app.post("/results", (req, res) => {
  switch (req.body.Digits){
    case '0':
     response.say('Please leave a message at the beep.\nPress the star key when finished.');
+`;
     response.record({
-        action: '/recordings',
+        action: "/voicemail",
         maxLength: 20,
+        playBeep: true,
         finishOnKey: '*'
     });
     response.say('I did not receive a recording');
@@ -102,26 +104,10 @@ res.send(response.toString());
 
 
 
-app.all("/recordings",(req,res)=>{
-    // Create a new saved message object from the Twilio data
-    var msg = new Message({
-      sid: request.param('CallSid'),
-      type:'call',
-      recordingUrl: request.param('RecordingUrl'),
-      recordingDuration: Number(request.param('RecordingDuration')),
-      fromCity:request.param('FromCity'),
-      fromState:request.param('FromState'),
-      fromCountry:request.param('FromCountry')
-  })
-
-  console.log("message >>>",msg)
-
-      var twiml = new twilio.TwimlResponse()
-          .say('Thanks for leaving Joe a message - your message will appear on the web site once we confirm it is PG rated.  Goodbye!', {
-              voice:'alice'
-          })
-          .hangup();
-      response.send(twiml)
+app.all("/voicemail",(req,res)=>{
+  console.log(req.body,">>?")
+  let twiml = new Twilio.twiml.VoiceResponse();
+  twiml.say("Thank you for your message. Good bye.");
 })
 
 const port = process.env.PORT || 8888;
