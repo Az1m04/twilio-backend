@@ -108,12 +108,15 @@ app.post("/handleDialCallStatus", (req, res) => {
   const badStatusCodes=["busy",
   "no-answer",
   "canceled",
+  "in-progress",
   "failed"]
+
+
   if (!badStatusCodes.includes(req.CallStatus))
-  {
+  {     console.log("BAD")
       return  res.send(response.toString())
   }
-
+  console.log("GOOD")
   const gather=response.gather({
     input:'dtmf',
     action:'/voiceCallbacks',
