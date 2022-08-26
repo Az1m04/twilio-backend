@@ -65,6 +65,9 @@ app.get("/voice/removetoken", (req, res) => {
    })
   onlineClients=arr
   console.log(onlineClients,"UPDATED")
+  res.send({
+    returnCode: "true"
+  })
 });
 
 app.post("/voice/incoming", (req, res) => {
