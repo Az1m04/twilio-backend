@@ -49,7 +49,11 @@ app.post("/voice", (req, res) => {
 
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity;
-  onlineClients.push(identity)
+   onlineClients.push(identity)
+   const unique= [...new Set(map(v=>v))]
+   onlineClients=unique
+   console.log(onlineClients,"UNIQUE")
+
   const token = voiceToken(identity, config);
   sendTokenResponse(token, res);
 });
@@ -60,8 +64,7 @@ app.get("/voice/removetoken", (req, res) => {
     return item !== identity
    })
   onlineClients=arr
-  const token = voiceToken(identity, config);
-  sendTokenResponse(token, res);
+  console.log(onlineClients,"UPDATED")
 });
 
 app.post("/voice/incoming", (req, res) => {
