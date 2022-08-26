@@ -60,7 +60,7 @@ app.get("/voice/token", (req, res) => {
 
 app.get("/voice/removetoken", (req, res) => {
   const identity = req.query.identity;
-  const arr = arr.filter((item)=> {
+  const arr = onlineClients?.filter((item)=> {
     return item !== identity
    })
   onlineClients=arr
