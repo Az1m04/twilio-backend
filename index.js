@@ -78,7 +78,7 @@ app.post("/results", (req, res) => {
     dial.client({
       statusCallback: '/calls/events',
       statusCallbackMethod: 'POST',
-      timeout:15
+      timeout:"10"
       
     },'15')
     // response.say('"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.');
@@ -103,6 +103,8 @@ res.send(response.toString());
 
 app.post("/calls/events", (req, res) => {
   console.log(req.body,"CLIENT>>>")
+  const response = new VoiceResponse();
+  res.send(response.toString())
 });
 
 app.all("/voicemail",(req,res)=>{
