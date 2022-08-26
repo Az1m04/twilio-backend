@@ -64,7 +64,10 @@ app.post("/voice/incoming", (req, res) => {
   action:'/results',
   timeout: 'auto',
 })
-  gather.say({ voice: 'alice' },"Please dial the extension if you know or dial 0 to talk to our agent.")
+  const say=gather.say({ voice: 'alice' })
+  say.prosody({
+    rate: 'x-slow',
+}, "Please dial the extension if you know or dial 0 to talk to our agent.");
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
 });
