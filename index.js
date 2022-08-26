@@ -79,7 +79,7 @@ app.post("/results", (req, res) => {
       statusCallback: '/callsevents',
       statusCallbackMethod: 'POST',
       
-    },'15').then(res=>console.log(res))
+    },'15')
     response.say('"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.');
     response.record({
         action: "/voicemail",
@@ -102,7 +102,6 @@ res.send(response.toString());
 
 app.post("/calls/events", (req, res) => {
   console.log(req.body,"CLIENT>>>")
-   return req.body
 });
 
 app.all("/voicemail",(req,res)=>{
