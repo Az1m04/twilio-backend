@@ -97,7 +97,7 @@ app.post("/results", (req, res) => {
         dial.client('15')
      }
      else {
-      callFallback(response)
+      callFallback()
      }
       
      break;
@@ -106,7 +106,7 @@ app.post("/results", (req, res) => {
         dial.client('17')
         }
       else {
-        callFallback(response)
+        callFallback()
        }
       break;
    default:
@@ -149,7 +149,8 @@ app.all("/voicemail",(req,res)=>{
 })
 
 
-const callFallback=(response)=>{
+const callFallback=()=>{
+  const response = new VoiceResponse();
   const gather=response.gather()
   gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
   response.record({
@@ -159,7 +160,7 @@ const callFallback=(response)=>{
    });
  }
 
- module.exports=callFallback(response)
+ module.exports=callFallback()
 
 const port = process.env.PORT || 8888;
 
