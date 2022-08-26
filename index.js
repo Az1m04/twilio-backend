@@ -54,6 +54,7 @@ app.get("/voice/token", (req, res) => {
   sendTokenResponse(token, res);
 });
 
+
 app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
   response.say({voice:'alice'},"Thank you for calling Health Vault.")
@@ -68,9 +69,10 @@ app.post("/voice/incoming", (req, res) => {
   res.send(response.toString());
 });
 
+
+
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
-
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action: '/handleDialCallStatus',
   method: 'POST'});
@@ -94,19 +96,19 @@ app.post("/calls/events", (req, res) => {
   res.send(response.toString())
 });
 
+
 app.post("/handleDialCallStatus", (req, res) => {
   console.log(req.body.CallStatus,"STATUS>>>")
   const response = new VoiceResponse();
   const badStatusCodes=["busy",
   "no-answer",
   "canceled",
-  "in-progress",
+  // "in-progress",
   "failed"]
   if (!badStatusCodes.includes(req.body.CallStatus))
   { 
    return  res.send(response.toString())
   }
-  console.log("GOOD")
   const gather=response.gather()
   gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
   response.record({
@@ -119,10 +121,7 @@ app.post("/handleDialCallStatus", (req, res) => {
 });
 
 
-
-
 app.all("/voicemail",(req,res)=>{
-  console.log(req.body,">>?")
   const response = new VoiceResponse();
   response.say("Thank you for your message. Good bye.");
   response.hangup();
