@@ -101,7 +101,7 @@ res.send(response.toString());
 //   res.send(response.toString());
 // });
 app.all("/voicemail",(req,res)=>{
-  console.log(req.body.RecordingUrl,">>?")
+  console.log(req.body,">>?")
   const response = new VoiceResponse();
   response.say("Thank you for your message. Good bye.");
   response.hangup();
