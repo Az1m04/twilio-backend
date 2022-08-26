@@ -5,7 +5,7 @@ const { voiceToken } = require("./tokens");
 const { VoiceResponse } = require("twilio").twiml;
 const cors = require("cors");
 const app = express();
-var onlineClients=[];
+var onlineClients="";
 
 var allowedDomains = ['https://dev-01.speedum.tech', 'http://localhost:3000'];
 app.use(cors({
@@ -33,7 +33,7 @@ const sendTokenResponse = (token, res) => {
 
 app.post("/voice/token", (req, res) => {
   const identity = req.body.identity;
-  onlineClients.push(identity)
+  onlineClients=identity
   const token = voiceToken(identity, config);
   sendTokenResponse(token, res);
 });
