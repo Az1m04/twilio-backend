@@ -78,6 +78,7 @@ app.post("/results", (req, res) => {
     dial.client({
       statusCallback: '/calls/events',
       statusCallbackMethod: 'POST',
+      timeout:15
       
     },'15')
     // response.say('"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.');
