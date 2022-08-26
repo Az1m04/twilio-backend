@@ -102,8 +102,8 @@ res.send(response.toString());
 // });
 app.all("/voicemail",(req,res)=>{
   console.log(req.body,">>?")
-  let twiml = new Twilio.twiml.VoiceResponse();
-  twiml.say("Thank you for your message. Good bye.");
+  const response = new VoiceResponse();
+  response.say("Thank you for your message. Good bye.");
 })
 
 const port = process.env.PORT || 8888;
