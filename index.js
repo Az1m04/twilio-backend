@@ -71,16 +71,12 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true ,timeout:10});
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true ,   action: '/handleDialCallStatus',
+  method: 'GET'});
  switch (req.body.Digits){
    case '0':
 
-    dial.client({
-      statusCallback: '/calls/events',
-      statusCallbackMethod: 'POST',
-      
-      
-    },'15')
+    dial.client('15')
     // response.say('"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.');
     // response.record({
     //     action: "/voicemail",
@@ -102,7 +98,12 @@ res.send(response.toString());
 
 
 app.post("/calls/events", (req, res) => {
-  console.log(req.body,"CLIENT>>>")
+  const response = new VoiceResponse();
+  res.send(response.toString())
+});
+
+app.get("/handleDialCallStatus", (req, res) => {
+  console.log(req.body,"STATUS>>>")
   const response = new VoiceResponse();
   res.send(response.toString())
 });
