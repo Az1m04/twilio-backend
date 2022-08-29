@@ -110,25 +110,21 @@ app.post("/results", (req, res) => {
   }
     switch (req.body.Digits){
       case '0':
-         if(onlineClients?.includes('15')){
+        if(onlineClients?.includes('15')){
           dial.client('15')
-          response.redirect('/handleRedirect');
        }
        else {
         callFallback()
-       }        
-        break;
-        case '100':
-          if(onlineClients?.includes('17')){
-            dial.client('17')
-            response.say("Please hold the line.")
-            response.redirect('/handleRedirect');
-         }
-         else {
+       }     
+       break;
+       case '100':
+        if(onlineClients?.includes('17')){
+          dial.client('17')
+          }
+        else {
           callFallback()
-
          }
-         break;
+        break;
       default:
          response.say("Sorry, I don't undersatand that choice.");  
          response.say("Please try again."); 
