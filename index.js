@@ -131,14 +131,7 @@ app.post("/calls/events", (req, res) => {
 
 
 app.get("/handleDialCallStatus", (req, res) => {
-  console.log(req.body?.DialCallStatus,"STATUS>>>")
   const response = new VoiceResponse();
-  const badStatusCodes=["busy",
-  "no-answer",
-  "canceled",
-  // "in-progress",
-  "failed"]
-  console.log(badStatusCodes.includes(req.body.DialCallStatus))
   const gather=response.gather()
   gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
   response.record({
@@ -146,7 +139,6 @@ app.get("/handleDialCallStatus", (req, res) => {
     playBeep: true,
     finishOnKey: '*'
    });
-  response.say("Thank you for your message. Good bye.");
   res.set("Content-Type", "text/xml");
   res.send(response.toString())
 });
