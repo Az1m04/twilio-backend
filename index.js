@@ -95,32 +95,33 @@ app.post("/results", (req, res) => {
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,
   method: 'POST'});
-  if(req.body.Digits){
+
+  const gatherValue=()=>{
+    const gather=response.gather({
+      input:'dtmf',
+      action:'/results',
+      timeout: 'auto',
+      })
+      const say=gather.say({ voice: 'alice' })
+      say.prosody({
+        rate: 'x-slow',
+    }, "Please dial the extension if you know or dial 0 to talk to our agent.");
+  }
     switch (req.body.Digits){
       case '0':
            dial.client( {action:"/handleDialCallStatus",method:"GET"},'15')
-           response.say('I am unreachable');  
         break;
         case '100':
            dial.client('17')
          break;
       default:
          response.say("Sorry, I don't undersatand that choice.");  
-         response.pause();
+         response.say("Please try again."); 
+         response.pause({length:1}) 
+         gatherValue()
        break;
     }
-  }
-  else {
-    response.say("Sorry, you have not dial any put, Please try again.");  
-    const gather=response.gather({
-      input:'dtmf',
-      action:'/results',
-      timeout: 'auto'})
-      const say=gather.say({ voice: 'alice' })
-      say.prosody({
-        rate: 'x-slow',
-    }, "Please dial the extension if you know or dial 0 to talk to our agent.")
-  }
+
 res.send(response.toString());
 });
 
