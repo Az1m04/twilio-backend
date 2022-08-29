@@ -93,8 +93,7 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,
-  method: 'POST'});
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:"/handleDialCallStatus",method:"GET"});
 
   const gatherValue=()=>{
     const gather=response.gather({
@@ -109,7 +108,7 @@ app.post("/results", (req, res) => {
   }
     switch (req.body.Digits){
       case '0':
-           dial.client( {action:"/handleDialCallStatus",method:"GET"},'15')
+           dial.client('15')
         break;
         case '100':
            dial.client('17')
@@ -121,7 +120,6 @@ app.post("/results", (req, res) => {
          gatherValue()
        break;
     }
-
 res.send(response.toString());
 });
 
