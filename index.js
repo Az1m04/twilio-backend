@@ -124,7 +124,7 @@ app.post("/results", (req, res) => {
       case '0':
         if(onlineClients?.includes('15')){
           dial.client('15')
-          response.redirect('handleRedirect')
+          response.redirect('/handleRedirect')
        }
        else {
         callFallback()
@@ -133,7 +133,7 @@ app.post("/results", (req, res) => {
        case '100':
         if(onlineClients?.includes('17')){
           dial.client('17')
-          response.redirect('handleRedirect')
+          response.redirect('/handleRedirect')
           }
         else {
           callFallback()
