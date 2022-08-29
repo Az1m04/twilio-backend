@@ -111,7 +111,7 @@ app.post("/calls/events", (req, res) => {
 
 
 app.post("/handleDialCallStatus", (req, res) => {
-  // console.log(req.body.CallStatus,"STATUS>>>")
+  console.log(req.body.CallStatus,"STATUS>>>")
   const response = new VoiceResponse();
   const badStatusCodes=["busy",
   "no-answer",
