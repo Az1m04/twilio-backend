@@ -88,8 +88,6 @@ app.post("/voice/incoming", (req, res) => {
   res.send(response.toString());
 });
 
-
-
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
@@ -108,8 +106,11 @@ app.post("/results", (req, res) => {
   }
     switch (req.body.Digits){
       case '0':
-           dial.client('15')
-           response.redirect('/handleRedirect');
+        response.enqueue({
+          waitUrl: 'wait-music.xml'
+      }, 'support');
+          //  dial.client('15')
+          //  response.redirect('/handleRedirect');
         break;
         case '100':
            dial.client('17')
