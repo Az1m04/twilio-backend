@@ -126,6 +126,7 @@ res.send(response.toString());
 
 
 app.post("/handleRedirect", (req, res) => {
+  console.log(req.body,"BODY>>>>>")
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,});
   dial.client('15')
