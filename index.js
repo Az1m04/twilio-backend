@@ -109,6 +109,7 @@ app.post("/results", (req, res) => {
     switch (req.body.Digits){
       case '0':
            dial.client('15')
+           response.redirect('/handleRedirect');
         break;
         case '100':
            dial.client('17')
