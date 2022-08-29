@@ -130,18 +130,19 @@ app.post("/calls/events", (req, res) => {
 });
 
 
-app.get("/handleDialCallStatus", (req, res) => {
-  const response = new VoiceResponse();
-  const gather=response.gather()
-  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
-  response.record({
-    action: "/voicemail",
-    playBeep: true,
-    finishOnKey: '*'
-   });
-  res.set("Content-Type", "text/xml");
-  res.send(response.toString())
-});
+// app.get("/handleDialCallStatus", (req, res) => {
+//   const response = new VoiceResponse();
+//   console.log(req?.body?.Callbac)
+//   const gather=response.gather()
+//   gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+//   response.record({
+//     action: "/voicemail",
+//     playBeep: true,
+//     finishOnKey: '*'
+//    });
+//   res.set("Content-Type", "text/xml");
+//   res.send(response.toString())
+// });
 
 
 app.all("/voicemail",(req,res)=>{
