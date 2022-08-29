@@ -95,7 +95,7 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:"/handleDialCallStatus",method:"GET"});
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
   const gatherValue=()=>{
     const gather=response.gather({
       input:'dtmf',
@@ -149,26 +149,26 @@ app.post("/results", (req, res) => {
 res.send(response.toString());
 });
 
-app.post("/handleDialCallStatus", (req, res) => {
-  console.log(res.body,"STATUS>>>")
-  // const response = new VoiceResponse();
-  // const badStatusCodes=["busy",
-  // "no-answer",
-  // "canceled",
-  // // "in-progress",
-  // "failed"]
-  // if (!badStatusCodes.includes(req.body.CallStatus))
-  // { 
-  //  return  res.send(response.toString())
-  // }
-  res.set("Content-Type", "text/xml");
-  res.send(response.toString())
-});
+// app.post("/handleDialCallStatus", (req, res) => {
+//   console.log(req.body,"STATUS>>>")
+//   const response = new VoiceResponse();
+//   const badStatusCodes=["busy",
+//   "no-answer",
+//   "canceled",
+//   // "in-progress",
+//   "failed"]
+//   if (!badStatusCodes.includes(req.body.CallStatus))
+//   { 
+//    return  res.send(response.toString())
+//   }
+//   res.set("Content-Type", "text/xml");
+//   res.send(response.toString())
+// });
 
 app.post("/handleRedirect", (req, res) => {
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10, action:"/handleDialCallStatus",method:"GET"});
-  const random= onlineClients[Math.floor(Math.random()*onlineClients.length)];
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
+  // const random= onlineClients[Math.floor(Math.random()*onlineClients.length)];
   dial.client("17")
   res.send(response.toString())
 });
