@@ -93,7 +93,7 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:"/handleDialCallStatus",method:"GET"});
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
 
   const gatherValue=()=>{
     const gather=response.gather({
@@ -109,9 +109,11 @@ app.post("/results", (req, res) => {
     switch (req.body.Digits){
       case '0':
            dial.client('15')
+           response.redirect('/handleRedirect');
         break;
         case '100':
            dial.client('17')
+           response.redirect('/handleRedirect');
          break;
       default:
          response.say("Sorry, I don't undersatand that choice.");  
@@ -143,16 +145,6 @@ app.post("/calls/events", (req, res) => {
   const response = new VoiceResponse();
   res.send(response.toString())
 });
-
-
-app.get("/handleDialCallStatus", (req, res) => {
-  const response = new VoiceResponse();
-  response.say('Redirecting')
-  response.redirect('/handleRedirect');
-  res.set("Content-Type", "text/xml");
-  res.send(response.toString())
-});
-
 
 app.all("/voicemail",(req,res)=>{
   const response = new VoiceResponse();
