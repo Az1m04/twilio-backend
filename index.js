@@ -113,7 +113,6 @@ app.post("/results", (req, res) => {
         break;
         case '100':
            dial.client('17')
-           response.redirect('/handleRedirect');
          break;
       default:
          response.say("Sorry, I don't undersatand that choice.");  
@@ -128,8 +127,15 @@ res.send(response.toString());
 
 app.post("/handleRedirect", (req, res) => {
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:"/handleDialCallStatus",method:"GET"});
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,});
   dial.client('15')
+  const gather=response.gather()
+  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+  response.record({
+    action: "/voicemail",
+    playBeep: true,
+    finishOnKey: '*'
+   });
   res.send(response.toString())
 });
 
@@ -141,16 +147,9 @@ app.post("/calls/events", (req, res) => {
 
 
 app.get("/handleDialCallStatus", (req, res) => {
-  console.log(req?.body?.DialCallStatus)
   const response = new VoiceResponse();
-  console.log(req?.body?.body)
-  const gather=response.gather()
-  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
-  response.record({
-    action: "/voicemail",
-    playBeep: true,
-    finishOnKey: '*'
-   });
+  response.say('Redirecting')
+  response.redirect('/handleRedirect');
   res.set("Content-Type", "text/xml");
   res.send(response.toString())
 });
