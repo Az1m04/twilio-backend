@@ -140,7 +140,7 @@ app.post("/calls/events", (req, res) => {
 
 
 app.get("/handleDialCallStatus", (req, res) => {
-  console.log(req?.body?.body)
+  console.log(req?.body?.DialCallStatus)
   const response = new VoiceResponse();
   console.log(req?.body?.body)
   const gather=response.gather()
