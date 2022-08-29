@@ -138,10 +138,8 @@ app.get("/handleDialCallStatus", (req, res) => {
   "canceled",
   // "in-progress",
   "failed"]
-  if (!badStatusCodes.includes(req.body.DialCallStatus))
-  { 
-   return  res.send(response.toString())
-  }
+  console.log(badStatusCodes.includes(req.body.DialCallStatus))
+
   response.say("Thank you for your message. Good bye.");
   res.set("Content-Type", "text/xml");
   res.send(response.toString())
