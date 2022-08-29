@@ -114,7 +114,6 @@ app.post("/results", (req, res) => {
           dial.client('15')
        }
        else {
-        response.say("Please try again."); 
         callFallback()
        }     
        break;
@@ -175,6 +174,7 @@ app.all("/voicemail",(req,res)=>{
 
 
 const callFallback=()=>{
+  response.say("Please try again."); 
   const response = new VoiceResponse();
   const gather=response.gather()
   gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
