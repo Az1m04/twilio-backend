@@ -107,7 +107,7 @@ app.post("/results", (req, res) => {
     switch (req.body.Digits){
       case '0':
         response.enqueue({
-          waitUrl: '/music'
+          waitUrl: 'http://twimlets.com/holdmusic?Bucket=com.twilio.music.classical&amp;Message=please%20wait'
       }, 'support');
           //  dial.client('15')
           //  response.redirect('/handleRedirect');
@@ -126,13 +126,7 @@ app.post("/results", (req, res) => {
 res.send(response.toString());
 });
 
-app.all('/music',(req,res)=>{
-  const response = new VoiceResponse();
-response.play({
-    loop: 10
-}, 'https://api.twilio.com/cowbell.mp3');
 
-})
 
 app.post("/handleRedirect", (req, res) => {
   const response = new VoiceResponse();
