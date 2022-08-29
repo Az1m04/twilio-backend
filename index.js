@@ -96,7 +96,7 @@ app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
-
+  console.log(onlineClients,"onlineClients>>")
   const gatherValue=()=>{
     const gather=response.gather({
       input:'dtmf',
@@ -116,8 +116,7 @@ app.post("/results", (req, res) => {
        }
        else {
         callFallback()
-       }
-             
+       }        
         break;
         case '100':
           if(onlineClients?.includes('17')){
