@@ -169,7 +169,7 @@ app.post("/handleRedirect", (req, res) => {
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10, action:"/handleDialCallStatus",method:"GET"});
   const random= onlineClients[Math.floor(Math.random()*onlineClients.length)];
-  dial.client(random)
+  dial.client("17")
   res.send(response.toString())
 });
 
