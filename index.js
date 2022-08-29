@@ -159,7 +159,7 @@ app.post("/handleDialCallStatus", (req, res) => {
 
 app.post("/handleRedirect", (req, res) => {
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10, action="/handleDialCallStatus",method="GET"});
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10, action:"/handleDialCallStatus",method:"GET"});
   const random= onlineClients[Math.floor(Math.random()*onlineClients.length)];
   dial.client(random)
   res.send(response.toString())
