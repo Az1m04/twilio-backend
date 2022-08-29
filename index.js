@@ -152,7 +152,6 @@ app.post("/handleDialCallStatus", (req, res) => {
   // { 
   //  return  res.send(response.toString())
   // }
-
   res.set("Content-Type", "text/xml");
   res.send(response.toString())
 });
