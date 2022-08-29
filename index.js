@@ -96,7 +96,6 @@ app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
-  console.log(onlineClients,"onlineClients>>")
   const gatherValue=()=>{
     const gather=response.gather({
       input:'dtmf',
@@ -112,7 +111,6 @@ app.post("/results", (req, res) => {
 
 
   const callFallback=()=>{
-    response.say("Please try again."); 
     const gather=response.gather()
     gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
     response.record({
