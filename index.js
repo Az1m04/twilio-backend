@@ -68,15 +68,17 @@ app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
   response.say({voice:'alice'},"Thank you for calling Health Vault.")
   response.pause({length:2})
+
   const gather=response.gather({
   input:'dtmf',
   action:'/results',
   timeout: 'auto',
-})
+  })
   const say=gather.say({ voice: 'alice' })
   say.prosody({
     rate: 'x-slow',
 }, "Please dial the extension if you know or dial 0 to talk to our agent.");
+ response.say("Thanks for calling")
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
 });
@@ -88,18 +90,32 @@ app.post("/results", (req, res) => {
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,
   method: 'POST'});
- switch (req.body.Digits){
-   case '0':
-        dial.client( {action:"/handleDialCallStatus",method:"GET"},'15')
-        response.say('I am unreachable');  
-     break;
-     case '100':
-        dial.client('17')
-      break;
-   default:
-      response.say("Sorry, I don't undersatand that choice.");
-    break;
-}
+  if(req.body.Digits){
+    switch (req.body.Digits){
+      case '0':
+           dial.client( {action:"/handleDialCallStatus",method:"GET"},'15')
+           response.say('I am unreachable');  
+        break;
+        case '100':
+           dial.client('17')
+         break;
+      default:
+         response.say("Sorry, I don't undersatand that choice.");  
+         response.pause();
+       break;
+    }
+  }
+  else {
+    response.say("Sorry, you have not dial any put, Please try again.");  
+    const gather=response.gather({
+      input:'dtmf',
+      action:'/results',
+      timeout: 'auto'})
+      const say=gather.say({ voice: 'alice' })
+      say.prosody({
+        rate: 'x-slow',
+    }, "Please dial the extension if you know or dial 0 to talk to our agent.")
+  }
 res.send(response.toString());
 });
 
@@ -110,7 +126,7 @@ app.post("/calls/events", (req, res) => {
 });
 
 
-app.post("/handleDialCallStatus", (req, res) => {
+app.get("/handleDialCallStatus", (req, res) => {
   console.log(req.body.CallStatus,"STATUS>>>")
   const response = new VoiceResponse();
   const badStatusCodes=["busy",
