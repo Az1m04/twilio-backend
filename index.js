@@ -5,7 +5,8 @@ const { voiceToken } = require("./tokens");
 const { VoiceResponse } = require("twilio").twiml;
 const cors = require("cors");
 const app = express();
-// var onlineClients=[];
+var onlineClients=[];
+var callAnsered=false;
 
 var allowedDomains = ['https://dev-01.speedum.tech', 'http://localhost:3000'];
 app.use(cors({
@@ -49,20 +50,23 @@ app.post("/voice", (req, res) => {
 
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity;
+  onlineClients.push(identity)
+  const unique= [...new Set(onlineClients?.map(v=>v))]
+  onlineClients=unique
   const token = voiceToken(identity, config);
   sendTokenResponse(token, res);
 });
 
-// app.get("/voice/removetoken", (req, res) => {
-//   const identity = req.query.identity;
-//   const arr = onlineClients?.filter((item)=> {
-//     return item !== identity
-//    })
-//   onlineClients=arr
-//   res.send({
-//     returnCode: "true"
-//   })
-// });
+app.get("/voice/removetoken", (req, res) => {
+  const identity = req.query.identity;
+  const arr = onlineClients?.filter((item)=> {
+    return item !== identity
+   })
+  onlineClients=arr
+  res.send({
+    returnCode: "true"
+  })
+});
 
 app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
@@ -106,12 +110,25 @@ app.post("/results", (req, res) => {
   }
     switch (req.body.Digits){
       case '0':
-              dial.client('15')
-          //  response.redirect('/handleRedirect');
+         if(onlineClients?.includes('15')){
+          dial.client('15')
+          response.redirect('/handleRedirect');
+       }
+       else {
+        callFallback()
+       }
+             
         break;
         case '100':
-           dial.client('17')
-           response.redirect('/handleRedirect');
+          if(onlineClients?.includes('17')){
+            dial.client('17')
+            response.say("Please hold the line.")
+            response.redirect('/handleRedirect');
+         }
+         else {
+          callFallback()
+
+         }
          break;
       default:
          response.say("Sorry, I don't undersatand that choice.");  
@@ -123,20 +140,28 @@ app.post("/results", (req, res) => {
 res.send(response.toString());
 });
 
+app.post("/handleDialCallStatus", (req, res) => {
+  console.log(res.body,"STATUS>>>")
+  // const response = new VoiceResponse();
+  // const badStatusCodes=["busy",
+  // "no-answer",
+  // "canceled",
+  // // "in-progress",
+  // "failed"]
+  // if (!badStatusCodes.includes(req.body.CallStatus))
+  // { 
+  //  return  res.send(response.toString())
+  // }
 
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString())
+});
 
 app.post("/handleRedirect", (req, res) => {
-  console.log(req.body,"BODY>>>>>")
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,});
-  dial.client('15')
-  const gather=response.gather()
-  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
-  response.record({
-    action: "/voicemail",
-    playBeep: true,
-    finishOnKey: '*'
-   });
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10, action="/handleDialCallStatus",method="GET"});
+  const random= onlineClients[Math.floor(Math.random()*onlineClients.length)];
+  dial.client(random)
   res.send(response.toString())
 });
 
@@ -154,17 +179,17 @@ app.all("/voicemail",(req,res)=>{
 })
 
 
-// const callFallback=()=>{
-//   const response = new VoiceResponse();
-//   const gather=response.gather()
-//   gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
-//   response.record({
-//     action: "/voicemail",
-//     playBeep: true,
-//     finishOnKey: '*'
-//    });
-//  }
-//  module.exports=callFallback()
+const callFallback=()=>{
+  const response = new VoiceResponse();
+  const gather=response.gather()
+  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+  response.record({
+    action: "/voicemail",
+    playBeep: true,
+    finishOnKey: '*'
+   });
+ }
+ module.exports=callFallback()
 
 const port = process.env.PORT || 8888;
 
