@@ -68,6 +68,17 @@ app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
   response.say({voice:'alice'},"Thank you for calling Health Vault.")
   response.pause({length:2})
+  const gatherValue=()=>{
+    const gather=response.gather({
+      input:'dtmf',
+      action:'/results',
+      timeout: 'auto',
+      })
+      const say=gather.say({ voice: 'alice' })
+      say.prosody({
+        rate: 'x-slow',
+    }, "Please dial the extension if you know or dial 0 to talk to our agent.");
+  }
   gatherValue()
   response.say('You have not daial any input. Please try again.')
   gatherValue()
@@ -157,20 +168,7 @@ const callFallback=()=>{
    });
  }
 
- const gatherValue=()=>{
-  const response = new VoiceResponse();
-  const gather=response.gather({
-    input:'dtmf',
-    action:'/results',
-    timeout: 'auto',
-    })
-    const say=gather.say({ voice: 'alice' })
-    say.prosody({
-      rate: 'x-slow',
-  }, "Please dial the extension if you know or dial 0 to talk to our agent.");
-}
 
-module.exports=gatherValue()
  module.exports=callFallback()
 
 const port = process.env.PORT || 8888;
