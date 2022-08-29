@@ -49,23 +49,20 @@ app.post("/voice", (req, res) => {
 
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity;
-  //  onlineClients.push(identity)
-  //  const unique= [...new Set(onlineClients?.map(v=>v))]
-  //  onlineClients=unique
   const token = voiceToken(identity, config);
   sendTokenResponse(token, res);
 });
 
-app.get("/voice/removetoken", (req, res) => {
-  const identity = req.query.identity;
-  const arr = onlineClients?.filter((item)=> {
-    return item !== identity
-   })
-  onlineClients=arr
-  res.send({
-    returnCode: "true"
-  })
-});
+// app.get("/voice/removetoken", (req, res) => {
+//   const identity = req.query.identity;
+//   const arr = onlineClients?.filter((item)=> {
+//     return item !== identity
+//    })
+//   onlineClients=arr
+//   res.send({
+//     returnCode: "true"
+//   })
+// });
 
 app.post("/voice/incoming", (req, res) => {
   const response = new VoiceResponse();
@@ -93,22 +90,11 @@ app.post("/results", (req, res) => {
   method: 'POST'});
  switch (req.body.Digits){
    case '0':
-      // if(onlineClients?.includes('15')){
-        dial.client( {action="/handleDialCallStatus",method="GET"},'15')
-        response.say('I am unreachable');
-    //  }
-    //  else {
-    //   callFallback()
-    //  }
-      
+        dial.client( {action:"/handleDialCallStatus",method:"GET"},'15')
+        response.say('I am unreachable');  
      break;
      case '100':
-      if(onlineClients?.includes('17')){
         dial.client('17')
-        }
-      else {
-        callFallback()
-       }
       break;
    default:
       response.say("Sorry, I don't undersatand that choice.");
