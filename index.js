@@ -166,13 +166,17 @@ res.send(response.toString());
 // });
 
 app.post("/handleRedirect", (req, res) => {
-  console.log("sad>>",req)
+  console.log("sad>>",req?.query?.callerId)
+  const callerIdFallback=req?.query?.callerId
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
+  const updateClient= onlineClients?.filter((item)=> {
+    return item !== callerIdFallback
+   })
 
-  const random= onlineClients[Math.floor(Math.random()*onlineClients.length)];
-  if(onlineClients?.length>0){
- dial.client('17')
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
+  const random= updateClient[Math.floor(Math.random()*updateClient.length)];
+  if(updateClient?.length>0){
+ dial.client(random)
   }
   else {
   
