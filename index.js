@@ -124,7 +124,7 @@ app.post("/results", (req, res) => {
       case '0':
         if(onlineClients?.includes('15')){
           dial.client('15')
-          response.redirect('/handleRedirect')
+          response.redirect(`/handleRedirect?clientId=${15}`)
        }
        else {
         callFallback()
@@ -133,7 +133,7 @@ app.post("/results", (req, res) => {
        case '100':
         if(onlineClients?.includes('17')){
           dial.client('17')
-          response.redirect('/handleRedirect')
+          response.redirect(`/handleRedirect?clientId=${17}`)
           }
         else {
           callFallback()
@@ -166,10 +166,25 @@ res.send(response.toString());
 // });
 
 app.post("/handleRedirect", (req, res) => {
+  console.log("sad>>",req)
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
-  // const random= onlineClients[Math.floor(Math.random()*onlineClients.length)];
-  dial.client("17")
+
+  const random= onlineClients[Math.floor(Math.random()*onlineClients.length)];
+  if(onlineClients?.length>0){
+ dial.client('17')
+  }
+  else {
+  
+      const gather=response.gather()
+      gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+      response.record({
+        action: "/voicemail",
+        playBeep: true,
+        finishOnKey: '*'
+       });
+     
+  }
   res.send(response.toString())
 });
 
