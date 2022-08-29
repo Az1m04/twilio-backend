@@ -95,7 +95,7 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:"/handleDialCallStatus",method:"GET"});
   const gatherValue=()=>{
     const gather=response.gather({
       input:'dtmf',
