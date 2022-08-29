@@ -166,8 +166,8 @@ res.send(response.toString());
 // });
 
 app.post("/handleRedirect", (req, res) => {
-  console.log("sad>>",req?.query?.callerId)
-  const callerIdFallback=req?.query?.callerId
+  console.log("sad>>",req?.query?.clientId)
+  const callerIdFallback=req?.query?.clientId
   const response = new VoiceResponse();
   const updateClient= onlineClients?.filter((item)=> {
     return item !== callerIdFallback
