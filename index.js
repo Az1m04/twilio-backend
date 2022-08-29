@@ -112,6 +112,7 @@ app.post("/results", (req, res) => {
         break;
         case '100':
            dial.client('17')
+           response.redirect('/handleRedirect');
          break;
       default:
          response.say("Sorry, I don't undersatand that choice.");  
@@ -121,6 +122,14 @@ app.post("/results", (req, res) => {
        break;
     }
 res.send(response.toString());
+});
+
+
+app.post("/handleRedirect", (req, res) => {
+  const response = new VoiceResponse();
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:"/handleDialCallStatus",method:"GET"});
+  dial.client('15')
+  res.send(response.toString())
 });
 
 
