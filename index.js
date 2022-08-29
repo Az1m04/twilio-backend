@@ -94,6 +94,7 @@ app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:"/handleDialCallStatus",method:"GET"});
+  response.say("I am unreachable")
 
   const gatherValue=()=>{
     const gather=response.gather({
@@ -131,7 +132,7 @@ app.post("/calls/events", (req, res) => {
 
 
 app.get("/handleDialCallStatus", (req, res) => {
-  console.log(req.body.CallStatus,"STATUS>>>")
+  console.log(req.body,"STATUS>>>")
   const response = new VoiceResponse();
   const badStatusCodes=["busy",
   "no-answer",
