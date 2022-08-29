@@ -108,6 +108,20 @@ app.post("/results", (req, res) => {
         rate: 'x-slow',
     }, "Please dial the extension if you know or dial 0 to talk to our agent.");
   }
+
+
+
+  const callFallback=()=>{
+    response.say("Please try again."); 
+    const gather=response.gather()
+    gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+    response.record({
+      action: "/voicemail",
+      playBeep: true,
+      finishOnKey: '*'
+     });
+   }
+
     switch (req.body.Digits){
       case '0':
         if(onlineClients?.includes('15')){
@@ -173,18 +187,7 @@ app.all("/voicemail",(req,res)=>{
 })
 
 
-const callFallback=()=>{
-  response.say("Please try again."); 
-  const response = new VoiceResponse();
-  const gather=response.gather()
-  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
-  response.record({
-    action: "/voicemail",
-    playBeep: true,
-    finishOnKey: '*'
-   });
- }
- module.exports=callFallback()
+
 
 const port = process.env.PORT || 8888;
 
