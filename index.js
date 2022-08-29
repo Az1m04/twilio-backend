@@ -93,12 +93,13 @@ app.post("/results", (req, res) => {
   method: 'POST'});
  switch (req.body.Digits){
    case '0':
-      if(onlineClients?.includes('15')){
-        dial.client('15')
-     }
-     else {
-      callFallback()
-     }
+      // if(onlineClients?.includes('15')){
+        dial.client( {action="/handleDialCallStatus",method="GET"},'15')
+        response.say('I am unreachable');
+    //  }
+    //  else {
+    //   callFallback()
+    //  }
       
      break;
      case '100':
