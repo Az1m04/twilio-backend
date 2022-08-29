@@ -139,7 +139,13 @@ app.get("/handleDialCallStatus", (req, res) => {
   // "in-progress",
   "failed"]
   console.log(badStatusCodes.includes(req.body.DialCallStatus))
-
+  const gather=response.gather()
+  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+  response.record({
+    action: "/voicemail",
+    playBeep: true,
+    finishOnKey: '*'
+   });
   response.say("Thank you for your message. Good bye.");
   res.set("Content-Type", "text/xml");
   res.send(response.toString())
@@ -154,19 +160,17 @@ app.all("/voicemail",(req,res)=>{
 })
 
 
-const callFallback=()=>{
-  const response = new VoiceResponse();
-  const gather=response.gather()
-  gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
-  response.record({
-    action: "/voicemail",
-    playBeep: true,
-    finishOnKey: '*'
-   });
- }
-
-
- module.exports=callFallback()
+// const callFallback=()=>{
+//   const response = new VoiceResponse();
+//   const gather=response.gather()
+//   gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+//   response.record({
+//     action: "/voicemail",
+//     playBeep: true,
+//     finishOnKey: '*'
+//    });
+//  }
+//  module.exports=callFallback()
 
 const port = process.env.PORT || 8888;
 
