@@ -94,7 +94,6 @@ app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:"/handleDialCallStatus",method:"GET"});
-  response.say("I am unreachable")
 
   const gatherValue=()=>{
     const gather=response.gather({
@@ -132,18 +131,18 @@ app.post("/calls/events", (req, res) => {
 
 
 app.get("/handleDialCallStatus", (req, res) => {
-  console.log(req.body,"STATUS>>>")
+  console.log(req.body?.DialCallStatus,"STATUS>>>")
   const response = new VoiceResponse();
   const badStatusCodes=["busy",
   "no-answer",
   "canceled",
   // "in-progress",
   "failed"]
-  if (!badStatusCodes.includes(req.body.CallStatus))
+  if (!badStatusCodes.includes(req.body.DialCallStatus))
   { 
    return  res.send(response.toString())
   }
-
+  response.say("Thank you for your message. Good bye.");
   res.set("Content-Type", "text/xml");
   res.send(response.toString())
 });
