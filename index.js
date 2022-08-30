@@ -122,12 +122,11 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;  // user input value
   const response = new VoiceResponse();
-  var dialedClientId="";
   const dial = response.dial({
     callerId: req.body.From,  // getting call from user
     answerOnBridge: true,
     timeout: 10, // dial timeout in seconds
-    
+    action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${'15'}`,  // dial call action handler
   });
   const gatherValue = () => {
     const gather = response.gather({
@@ -164,15 +163,14 @@ app.post("/results", (req, res) => {
     case "0":
       if (onlineClients?.includes("15")) {
         dialedClientId="15"
-        dial.client({action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${dialedClientId}`},  "15"); // dial call action handler}
-       } else {
+        dial.client("15");
+      } else {
         callFallback();
       }
       break;
     case "100":
       if (onlineClients?.includes("18")) {
-        dialedClientId="18"
-          dial.client({action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${dialedClientId}`},"18");
+          dial.client("18");
       } else {
         callFallback();
       }
