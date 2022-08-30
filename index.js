@@ -146,7 +146,9 @@ app.post("/results", (req, res) => {
 res.send(response.toString());
 });
 app.post("/handleDialCallStatus", (req, res) => {
+  console.log(req?.body,">>>>> STATUS")
   const callerIdFallback=req?.query?.dialInput
+  console.log(callerIdFallback,">>>>> INPUT")
   const response = new VoiceResponse();
   const badStatusCodes=["busy",
     "no-answer",
@@ -157,7 +159,7 @@ app.post("/handleDialCallStatus", (req, res) => {
      return  res.send(response.toString())
     }
     
-    if(callerIdFallback){
+    if(callerIdFallback<=0){
       response.redirect(`/handleRedirect?clientId=${callerIdFallback}`)
     }
     else {
