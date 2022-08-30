@@ -39,7 +39,6 @@ app.post("/voice/token", (req, res) => {
 });
 
 app.post("/voice", (req, res) => {
-  // console.log('VOICE>>>>',req)
   const To = req.body.To;
   const response = new VoiceResponse();
   const dial = response.dial({ callerId: config.callerId });
@@ -131,9 +130,9 @@ app.post("/results", (req, res) => {
        }     
        break;
        case '100':
-        if(onlineClients?.includes('17')){
-          dial.client('17')
-          response.redirect(`/handleRedirect?clientId=${17}`)
+        if(onlineClients?.includes('16')){
+          dial.client('16')
+          response.redirect(`/handleRedirect?clientId=${16}`)
           }
         else {
           callFallback()
@@ -149,24 +148,7 @@ app.post("/results", (req, res) => {
 res.send(response.toString());
 });
 
-// app.post("/handleDialCallStatus", (req, res) => {
-//   console.log(req.body,"STATUS>>>")
-//   const response = new VoiceResponse();
-//   const badStatusCodes=["busy",
-//   "no-answer",
-//   "canceled",
-//   // "in-progress",
-//   "failed"]
-//   if (!badStatusCodes.includes(req.body.CallStatus))
-//   { 
-//    return  res.send(response.toString())
-//   }
-//   res.set("Content-Type", "text/xml");
-//   res.send(response.toString())
-// });
-
 app.post("/handleRedirect", (req, res) => {
-  console.log("sad>>",req?.query?.clientId)
   const callerIdFallback=req?.query?.clientId
   const response = new VoiceResponse();
   const updateClient= onlineClients?.filter((item)=> {
