@@ -183,11 +183,17 @@ app.post("/results", (req, res) => {
       }
       break;
       case "101":
-        dial.conference({
-          beep: false,
-          startConferenceOnEnter: true,
-          endConferenceOnExit: true
-      }, 'NoMusicNoBeepRoom');
+        if (request.body.From == config.callerId) {
+          dial.conference('My conference', {
+            startConferenceOnEnter: true,
+            endConferenceOnExit: true,
+          });
+        } else {
+          // Otherwise have the caller join as a regular participant
+          dial.conference('My conference', {
+            startConferenceOnEnter: false,
+          });
+        }
         break;
     default:
       response.say("Sorry, I don't undersatand that choice.");
