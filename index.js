@@ -94,7 +94,7 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:"/handleDialCallStatus"});
   const gatherValue=()=>{
     const gather=response.gather({
       input:'dtmf',
@@ -132,7 +132,6 @@ app.post("/results", (req, res) => {
        case '100':
         if(onlineClients?.includes('18')){
           dial.client('18')
-          response.redirect(`/handleRedirect?clientId=${18}`)
           }
         else {
           callFallback()
@@ -147,7 +146,13 @@ app.post("/results", (req, res) => {
     }
 res.send(response.toString());
 });
-
+app.post("/handleDialCallStatus", (req, res) => {
+  console.log(req.body,"STATUS>>>")
+  const response = new VoiceResponse();
+   response.say("No one available to take your call.")
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString())
+});
 app.post("/handleRedirect", (req, res) => {
   const callerIdFallback=req?.query?.clientId
   const response = new VoiceResponse();
