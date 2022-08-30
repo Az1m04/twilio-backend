@@ -130,9 +130,9 @@ app.post("/results", (req, res) => {
        }     
        break;
        case '100':
-        if(onlineClients?.includes('16')){
-          dial.client('16')
-          response.redirect(`/handleRedirect?clientId=${16}`)
+        if(onlineClients?.includes('18')){
+          dial.client('18')
+          response.redirect(`/handleRedirect?clientId=${18}`)
           }
         else {
           callFallback()
