@@ -147,7 +147,7 @@ app.post("/results", (req, res) => {
 res.send(response.toString());
 });
 app.post("/handleDialCallStatus", (req, res) => {
-  console.log(req.body,"STATUS>>>")
+  console.log(req.body?.DialCallStatus,"STATUS>>>")
   const response = new VoiceResponse();
    response.say("No one available to take your call.")
   res.set("Content-Type", "text/xml");
