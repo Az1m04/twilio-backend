@@ -200,6 +200,7 @@ app.post("/handleDialCallStatus", (req, res) => {
   }
 
   if (callerIdFallback <= 0) {
+    response.say('Please hold the line.')
     response.redirect(`/handleRedirect?clientId=${callerIdFallback}`);   // redirect call if dialed input 0
   } else {
      // Record voicemail if client not available
@@ -237,6 +238,7 @@ app.post("/handleRedirect", (req, res) => {
     callerId: req.body.From,
     answerOnBridge: true,
     timeout: 10,
+    action:'/handleRedialDialCallStatus'
   });
 
   const random = updateClient[Math.floor(Math.random() * updateClient.length)]; // Taking random available client
@@ -261,6 +263,23 @@ app.post("/handleRedirect", (req, res) => {
 
 /***********************ENDS******************************/
 
+/***************** HANDLE DIAL CALL BACK  ***************** */
+/***********************STARTS******************************/
+app.post("/handleRedialDialCallStatus", (req, res) => {
+
+  const response = new VoiceResponse();
+  
+  const badStatusCodes = ["busy", "no-answer", "canceled", "failed"]; //Bad call cases
+
+  if (!badStatusCodes.includes(req.body.DialCallStatus)) {
+    return res.send(response.toString());
+  }
+
+  response.say('Thanks for calling.')
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString());
+});
+/***********************ENDS******************************/
 
 /***************** HANDLE VOICEMAIL ***************** */
 /***********************STARTS******************************/
