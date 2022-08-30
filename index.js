@@ -291,7 +291,11 @@ app.post("/handleRedialDialCallStatus", (req, res) => {
 app.get("/getRecordings", (req, res) => {
   client.recordings
   .list({limit: 20})
-  .then(recordings => res.send(recordings.toString()));
+  .then(recordings => res.json({
+    success: true,
+    message: "fetched successfully",
+   recordings
+  }));
 });
 /***********************ENDS******************************/
 
