@@ -289,40 +289,43 @@ app.post("/handleRedialDialCallStatus", (req, res) => {
 /***********************ENDS******************************/
 
 
-/***************** GET CALL RECORDINGS LOGS ***************** */
-/***********************STARTS******************************/
-app.get("/getRecordings", (req, res) => {
-  client.recordings
-  .list({limit: 20})
-  .then(recordings => 
-    res.json({
-      success: true,
-      message: "fetched successfully",
-      recordings
-    }));
-});
-/***********************ENDS******************************/
+// /***************** GET CALL RECORDINGS LOGS ***************** */
+// /***********************STARTS******************************/
+// app.get("/getRecordings", (req, res) => {
+//   client.recordings
+//   .list({limit: 20})
+//   .then(recordings => 
+//     res.json({
+//       success: true,
+//       message: "fetched successfully",
+//       recordings
+//     }));
+// });
+// /***********************ENDS******************************/
 
-/***************** GET CALL LOGS ***************** */
-/***********************STARTS******************************/
-app.get("/callLogs", (req, res) => {
-  client.calls
-  .list({limit: 20})
-  .then(call => 
-    res.json({
-      success: true,
-      message: "fetched successfully",
-      call
-    }));
-});
-/***********************ENDS******************************/
+// /***************** GET CALL LOGS ***************** */
+// /***********************STARTS******************************/
+// app.get("/callLogs", (req, res) => {
+//   client.calls
+//   .list({limit: 20})
+//   .then(call => 
+//     res.json({
+//       success: true,
+//       message: "fetched successfully",
+//       call
+//     }));
+// });
+// /***********************ENDS******************************/
 
 /***************** HANDLE VOICEMAIL ***************** */
 /***********************STARTS******************************/
 
 app.all("/voicemail", (req, res) => {
   const response = new VoiceResponse();
-
+  console.log(req,"REQ")
+  client.recordings
+  .list({callSid: req.body.callSid, limit: 20})
+  .then(recordings => recordings.forEach(r => console.log(r.sid)));
   response.say("Thank you for your message. Good bye.");  // recieved voice response message
   response.hangup();
   res.send(response.toString());
