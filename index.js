@@ -188,7 +188,7 @@ app.post("/results", (req, res) => {
 /***************** HANDLE DIAL CALL BACK  ***************** */
 /***********************STARTS******************************/
 app.post("/handleDialCallStatus", (req, res) => {
-
+   console.log(req?.body,'>>>>BODY')
   const callerIdFallback = req?.query?.dialInput;       // dialed input 
 
   const response = new VoiceResponse();
