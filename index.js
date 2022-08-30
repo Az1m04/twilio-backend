@@ -7,6 +7,11 @@ const cors = require("cors");
 const app = express();
 var onlineClients = []; //store available online clients
 
+const accountSid =config.accountSid;
+const authToken = config.authToken;
+
+const client = require('twilio')(accountSid, authToken);
+
 var allowedDomains = ["https://dev-01.speedum.tech", "http://localhost:3000"]; //allowed domains
 app.use(
   cors({
@@ -160,6 +165,7 @@ app.post("/results", (req, res) => {
   };
 
 
+
 //Gather digit output results
   switch (req.body.Digits) {
     case "0":
@@ -279,6 +285,13 @@ app.post("/handleRedialDialCallStatus", (req, res) => {
   response.say('Thanks for calling.')
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
+});
+/***********************ENDS******************************/
+
+app.get("/getRecordings", (req, res) => {
+  client.recordings
+  .list({limit: 20})
+  .then(recordings => recordings.forEach(r => console.log(r.sid)));
 });
 /***********************ENDS******************************/
 
