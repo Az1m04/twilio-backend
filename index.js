@@ -182,6 +182,14 @@ app.post("/results", (req, res) => {
         callFallback();
       }
       break;
+      case "101":
+        dial.conference({
+          beep: false,
+          waitUrl: 'http://your-webhook-host.com',
+          startConferenceOnEnter: true,
+          endConferenceOnExit: true
+      }, 'NoMusicNoBeepRoom');
+        break;
     default:
       response.say("Sorry, I don't undersatand that choice.");
       response.say("Please try again.");
