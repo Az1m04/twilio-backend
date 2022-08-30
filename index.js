@@ -94,7 +94,7 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;
   const response = new VoiceResponse();
-  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:"/handleDialCallStatus"});
+  const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10,action:`/handleDialCallStatus?dialInput=${userInput}`});
   const gatherValue=()=>{
     const gather=response.gather({
       input:'dtmf',
@@ -146,6 +146,7 @@ app.post("/results", (req, res) => {
 res.send(response.toString());
 });
 app.post("/handleDialCallStatus", (req, res) => {
+  const callerIdFallback=req?.query?.dialInput
   const response = new VoiceResponse();
   const badStatusCodes=["busy",
     "no-answer",
@@ -155,16 +156,25 @@ app.post("/handleDialCallStatus", (req, res) => {
     { 
      return  res.send(response.toString())
     }
-    const gather=response.gather()
-    gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
-    response.record({
-      action: "/voicemail",
-      playBeep: true,
-      finishOnKey: '*'
-     });
+    
+    if(callerIdFallback){
+      response.redirect(`/handleRedirect?clientId=${callerIdFallback}`)
+    }
+    else {
+      const gather=response.gather()
+      gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
+      response.record({
+        action: "/voicemail",
+        playBeep: true,
+        finishOnKey: '*'
+       });
+    }
+
+
   res.set("Content-Type", "text/xml");
   res.send(response.toString())
 });
+
 app.post("/handleRedirect", (req, res) => {
   const callerIdFallback=req?.query?.clientId
   const response = new VoiceResponse();
@@ -175,10 +185,9 @@ app.post("/handleRedirect", (req, res) => {
   const dial = response.dial({ callerId: req.body.From, answerOnBridge: true,timeout:10});
   const random= updateClient[Math.floor(Math.random()*updateClient.length)];
   if(updateClient?.length>0){
- dial.client(random)
+     dial.client(random)
   }
   else {
-  
       const gather=response.gather()
       gather.say({ voice: 'alice' },"Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished.")
       response.record({
