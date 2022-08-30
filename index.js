@@ -183,7 +183,7 @@ app.post("/results", (req, res) => {
       }
       break;
       case "101":
-        if (request.body.From == config.callerId) {
+        if (req.body.From == config.callerId) {
           dial.conference('My conference', {
             startConferenceOnEnter: true,
             endConferenceOnExit: true,
