@@ -322,10 +322,10 @@ app.post("/handleRedialDialCallStatus", (req, res) => {
 
 app.all("/voicemail", (req, res) => {
   const response = new VoiceResponse();
-  console.log(req,"REQ")
+  console.log(req.body,"BODY")
   client.recordings
   .list({callSid: req.body.callSid, limit: 20})
-  .then(recordings => recordings.forEach(r => console.log(r.sid)));
+  // .then(recordings => recordings.forEach(r => console.log(r.sid)));
   response.say("Thank you for your message. Good bye.");  // recieved voice response message
   response.hangup();
   res.send(response.toString());
