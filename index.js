@@ -122,11 +122,13 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;  // user input value
   const response = new VoiceResponse();
+
+  const random = onlineClients[Math.floor(Math.random() * onlineClients.length)]; // Taking random available client
   const dial = response.dial({
     callerId: req.body.From,  // getting call from user
     answerOnBridge: true,
     timeout: 10, // dial timeout in seconds
-    action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${'15'}`,  // dial call action handler
+    action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${random}`,  // dial call action handler
   });
   const gatherValue = () => {
     const gather = response.gather({
@@ -162,7 +164,6 @@ app.post("/results", (req, res) => {
   switch (req.body.Digits) {
     case "0":
       if (onlineClients?.includes("15")) {
-        dialedClientId="15"
         dial.client("15");
       } else {
         callFallback();
@@ -191,7 +192,6 @@ app.post("/results", (req, res) => {
 app.post("/handleDialCallStatus", (req, res) => {
   const clientIdFallback = req?.query?.clientId;    //client ID
   const callerIdFallback = req?.query?.dialInput;       // dialed input 
-  console.log(clientIdFallback,">>CLIENT ID",req,"REQ")
   const response = new VoiceResponse();
   
   const badStatusCodes = ["busy", "no-answer", "canceled", "failed"]; //Bad call cases
