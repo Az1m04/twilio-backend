@@ -306,7 +306,7 @@ app.get("/getRecordings", (req, res) => {
 /***************** GET CALL LOGS ***************** */
 /***********************STARTS******************************/
 app.get("/callLogs", (req, res) => {
-  client.call
+  client.calls
   .list({limit: 20})
   .then(call => 
     res.json({
