@@ -163,6 +163,7 @@ app.post("/results", (req, res) => {
   switch (req.body.Digits) {
     case "0":
       if (onlineClients?.includes("15")) {
+        dialedClientId="15"
         dial.client("15");
       } else {
         callFallback();
@@ -170,7 +171,6 @@ app.post("/results", (req, res) => {
       break;
     case "100":
       if (onlineClients?.includes("18")) {
-        dialedClientId="18"
           dial.client("18");
       } else {
         callFallback();
