@@ -291,7 +291,7 @@ app.post("/handleRedialDialCallStatus", (req, res) => {
 app.get("/getRecordings", (req, res) => {
   client.recordings
   .list({limit: 20})
-  .then(recordings => recordings.forEach(r => console.log(r.sid)));
+  .then(recordings => res.send(recordings.toString()));
 });
 /***********************ENDS******************************/
 
