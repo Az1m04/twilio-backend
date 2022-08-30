@@ -122,11 +122,12 @@ app.post("/voice/incoming", (req, res) => {
 app.post("/results", (req, res) => {
   const userInput = req.body.Digits;  // user input value
   const response = new VoiceResponse();
+  var dialedClientId="";
   const dial = response.dial({
     callerId: req.body.From,  // getting call from user
     answerOnBridge: true,
     timeout: 10, // dial timeout in seconds
-    action: `/handleDialCallStatus?dialInput=${userInput}`,  // dial call action handler
+    action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${dialedClientId}`,  // dial call action handler
   });
   const gatherValue = () => {
     const gather = response.gather({
@@ -169,6 +170,7 @@ app.post("/results", (req, res) => {
       break;
     case "100":
       if (onlineClients?.includes("18")) {
+        dialedClientId="18"
           dial.client("18");
       } else {
         callFallback();
@@ -188,9 +190,9 @@ app.post("/results", (req, res) => {
 /***************** HANDLE DIAL CALL BACK  ***************** */
 /***********************STARTS******************************/
 app.post("/handleDialCallStatus", (req, res) => {
-   console.log(req?.body,'>>>>BODY')
+  const clientIdFallback = req?.query?.clientId;    //client ID
   const callerIdFallback = req?.query?.dialInput;       // dialed input 
-
+  console.log(clientIdFallback,">>CLIENT ID",req,"REQ")
   const response = new VoiceResponse();
   
   const badStatusCodes = ["busy", "no-answer", "canceled", "failed"]; //Bad call cases
@@ -201,7 +203,7 @@ app.post("/handleDialCallStatus", (req, res) => {
 
   if (callerIdFallback <= 0) {
     response.say('Please hold the line.')
-    response.redirect(`/handleRedirect?clientId=${callerIdFallback}`);   // redirect call if dialed input 0
+    response.redirect(`/handleRedirect?clientId=${clientIdFallback}`);   // redirect call if dialed input 0
   } else {
      // Record voicemail if client not available
     const gather = response.gather();
