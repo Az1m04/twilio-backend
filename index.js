@@ -185,7 +185,6 @@ app.post("/results", (req, res) => {
       case "101":
         dial.conference({
           beep: false,
-          waitUrl: 'http://your-webhook-host.com',
           startConferenceOnEnter: true,
           endConferenceOnExit: true
       }, 'NoMusicNoBeepRoom');
