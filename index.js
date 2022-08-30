@@ -127,7 +127,7 @@ app.post("/results", (req, res) => {
     callerId: req.body.From,  // getting call from user
     answerOnBridge: true,
     timeout: 10, // dial timeout in seconds
-    action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${dialedClientId}`,  // dial call action handler
+    
   });
   const gatherValue = () => {
     const gather = response.gather({
@@ -164,14 +164,15 @@ app.post("/results", (req, res) => {
     case "0":
       if (onlineClients?.includes("15")) {
         dialedClientId="15"
-        dial.client("15");
-      } else {
+        dial.client({action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${dialedClientId}`},  "15"); // dial call action handler}
+       } else {
         callFallback();
       }
       break;
     case "100":
       if (onlineClients?.includes("18")) {
-          dial.client("18");
+        dialedClientId="18"
+          dial.client({action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${dialedClientId}`},"18");
       } else {
         callFallback();
       }
