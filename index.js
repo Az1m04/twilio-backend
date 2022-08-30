@@ -295,7 +295,7 @@ app.get("/getRecordings", (req, res) => {
     res.json({
       success: true,
       message: "fetched successfully",
-      recordings:recordings.forEach(r => r.mediaUrl)
+      recordings
     }));
 });
 /***********************ENDS******************************/
