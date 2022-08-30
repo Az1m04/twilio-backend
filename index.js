@@ -288,6 +288,9 @@ app.post("/handleRedialDialCallStatus", (req, res) => {
 });
 /***********************ENDS******************************/
 
+
+/***************** GET CALL RECORDINGS LOGS ***************** */
+/***********************STARTS******************************/
 app.get("/getRecordings", (req, res) => {
   client.recordings
   .list({limit: 20})
@@ -296,6 +299,20 @@ app.get("/getRecordings", (req, res) => {
       success: true,
       message: "fetched successfully",
       recordings
+    }));
+});
+/***********************ENDS******************************/
+
+/***************** GET CALL LOGS ***************** */
+/***********************STARTS******************************/
+app.get("/callLogs", (req, res) => {
+  client.call
+  .list({limit: 20})
+  .then(call => 
+    res.json({
+      success: true,
+      message: "fetched successfully",
+      call
     }));
 });
 /***********************ENDS******************************/
