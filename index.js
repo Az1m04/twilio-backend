@@ -291,12 +291,12 @@ app.post("/handleRedialDialCallStatus", (req, res) => {
 app.get("/getRecordings", (req, res) => {
   client.recordings
   .list({limit: 20})
-  .then(recordings => { const data=recordings.forEach(r => r.mediaUrl)
+  .then(recordings => 
     res.json({
       success: true,
       message: "fetched successfully",
-     data
-    })});
+      recordings:recordings.forEach(r => r.mediaUrl)
+    }));
 });
 /***********************ENDS******************************/
 
