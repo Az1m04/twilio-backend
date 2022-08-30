@@ -163,8 +163,8 @@ app.post("/results", (req, res) => {
 //Gather digit output results
   switch (req.body.Digits) {
     case "0":
-      if (onlineClients?.includes("15")) {
-        dial.client("15");
+      if (onlineClients?.includes(random)) {
+        dial.client(random);
       } else {
         callFallback();
       }
