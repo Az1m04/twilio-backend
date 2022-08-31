@@ -280,6 +280,11 @@ app.post("/handleRedirect", (req, res) => {
 app.post("/joinconference", (req, res) => {
   console.log(">>BODY",req.body)
   const response = new VoiceResponse();
+  const dial = response.dial({
+    callerId: req.body.From,
+    answerOnBridge: true,
+    timeout: 10,
+  });
   dial.conference('myconference', {
     startConferenceOnEnter: true,
     endConferenceOnExit: true,
