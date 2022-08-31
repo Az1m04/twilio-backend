@@ -183,17 +183,12 @@ app.post("/results", (req, res) => {
       }
       break;
       case "101":
-        if (req.body.From == config.callerId) {
           dial.conference('My conference', {
             startConferenceOnEnter: true,
             endConferenceOnExit: true,
+            action:"/handleconference",
             statusCallbackEvent: 'start end join leave mute hold'
           });
-        } else {
-          dial.conference('My conference', {
-            startConferenceOnEnter: false,
-          });
-        }
         break;
     default:
       response.say("Sorry, I don't undersatand that choice.");
@@ -282,6 +277,25 @@ app.post("/handleRedirect", (req, res) => {
   res.send(response.toString());
 });
 
+/***********************ENDS******************************/
+
+
+/***************** HANDLE CONFERENCE CALL BACK  ***************** */
+/***********************STARTS******************************/
+app.post("/handleconference", (req, res) => {
+  console.log(">>BODY",req.body)
+  const response = new VoiceResponse();
+  const dial = response.dial({
+    callerId: req.body.From,
+    answerOnBridge: true,
+    timeout: 10,
+    });
+  dial.client('15')
+
+  response.say('Thanks for calling.')
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString());
+});
 /***********************ENDS******************************/
 
 
