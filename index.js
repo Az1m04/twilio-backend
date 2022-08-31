@@ -183,12 +183,7 @@ app.post("/results", (req, res) => {
       }
       break;
       case "101":
-          dial.conference('My conference', {
-            startConferenceOnEnter: true,
-            endConferenceOnExit: true,
-            action:"/handleconference",
-            statusCallbackEvent: 'start end join leave mute hold'
-          });
+        dial.client({url:'/joinconference'},'15')
         break;
     default:
       response.say("Sorry, I don't undersatand that choice.");
@@ -282,15 +277,15 @@ app.post("/handleRedirect", (req, res) => {
 
 /***************** HANDLE CONFERENCE CALL BACK  ***************** */
 /***********************STARTS******************************/
-app.post("/handleconference", (req, res) => {
+app.post("/joinconference", (req, res) => {
   console.log(">>BODY",req.body)
   const response = new VoiceResponse();
-  const dial = response.dial({
-    callerId: req.body.From,
-    answerOnBridge: true,
-    timeout: 10,
-    });
-  dial.client('15')
+  dial.conference('myconference', {
+    startConferenceOnEnter: true,
+    endConferenceOnExit: true,
+    action:"/handleconference",
+    statusCallbackEvent: 'start end join leave mute hold'
+  });
 
   response.say('Thanks for calling.')
   res.set("Content-Type", "text/xml");
