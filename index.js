@@ -187,9 +187,10 @@ app.post("/results", (req, res) => {
           dial.conference('My conference', {
             startConferenceOnEnter: true,
             endConferenceOnExit: true,
+            statusCallback: '/handleconference',
+            statusCallbackEvent: 'start end join leave mute hold'
           });
         } else {
-          // Otherwise have the caller join as a regular participant
           dial.conference('My conference', {
             startConferenceOnEnter: false,
           });
@@ -282,6 +283,25 @@ app.post("/handleRedirect", (req, res) => {
 });
 
 /***********************ENDS******************************/
+
+
+/***************** HANDLE CONFERENCE CALL BACK  ***************** */
+/***********************STARTS******************************/
+app.post("/handleconference", (req, res) => {
+  console.log(req.body,"BODY")
+  const response = new VoiceResponse();
+  // const badStatusCodes = ["busy", "no-answer", "canceled", "failed"]; //Bad call cases
+
+  // if (!badStatusCodes.includes(req.body.DialCallStatus)) {
+  //   return res.send(response.toString());
+  // }
+
+  response.say('Thanks for calling.')
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString());
+});
+/***********************ENDS******************************/
+
 
 /***************** HANDLE DIAL CALL BACK  ***************** */
 /***********************STARTS******************************/
