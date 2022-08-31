@@ -288,14 +288,12 @@ app.post("/handleRedirect", (req, res) => {
 /***************** HANDLE CONFERENCE CALL BACK  ***************** */
 /***********************STARTS******************************/
 app.post("/handleconference", (req, res) => {
-  console.log(req.body,"BODY")
   const response = new VoiceResponse();
   const dial = response.dial({
     callerId: req.body.From,
     answerOnBridge: true,
     timeout: 10,
-    action:'/handleRedialDialCallStatus'
-  });
+    });
   dial.client('15')
 
   response.say('Thanks for calling.')
