@@ -187,7 +187,6 @@ app.post("/results", (req, res) => {
           dial.conference('My conference', {
             startConferenceOnEnter: true,
             endConferenceOnExit: true,
-            statusCallback: '/handleconference',
             statusCallbackEvent: 'start end join leave mute hold'
           });
         } else {
@@ -225,6 +224,7 @@ app.post("/handleDialCallStatus", (req, res) => {
     response.redirect(`/handleRedirect?clientId=${clientIdFallback}`);   // redirect call if dialed input 0
   } else {
      // Record voicemail if client not available
+     console.log("MEHU")
     const gather = response.gather();
     gather.say(
       { voice: "alice" },
@@ -282,24 +282,6 @@ app.post("/handleRedirect", (req, res) => {
   res.send(response.toString());
 });
 
-/***********************ENDS******************************/
-
-
-/***************** HANDLE CONFERENCE CALL BACK  ***************** */
-/***********************STARTS******************************/
-app.post("/handleconference", (req, res) => {
-  const response = new VoiceResponse();
-  const dial = response.dial({
-    callerId: req.body.From,
-    answerOnBridge: true,
-    timeout: 10,
-    });
-  dial.client('15')
-
-  response.say('Thanks for calling.')
-  res.set("Content-Type", "text/xml");
-  res.send(response.toString());
-});
 /***********************ENDS******************************/
 
 
