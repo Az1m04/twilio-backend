@@ -278,14 +278,12 @@ app.post("/handleRedirect", (req, res) => {
 /***************** HANDLE CONFERENCE CALL BACK  ***************** */
 /***********************STARTS******************************/
 app.post("/joinconference", (req, res) => {
-  console.log(">>BODY",req.body)
   const response = new VoiceResponse();
   const dial = response.dial({
     callerId: req.body.From,
     answerOnBridge: true,
     timeout: 10,
   });
-  dial.client('18')
   dial.conference('myconference', {
     startConferenceOnEnter: true,
     endConferenceOnExit: true,
@@ -299,6 +297,13 @@ app.post("/joinconference", (req, res) => {
 });
 /***********************ENDS******************************/
 
+app.post("/handleconference", (req, res) => {
+  console.log(">>BODY",req.body)
+
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString());
+});
+/***********************ENDS******************************/
 
 /***************** HANDLE DIAL CALL BACK  ***************** */
 /***********************STARTS******************************/
