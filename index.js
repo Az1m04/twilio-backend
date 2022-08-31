@@ -285,6 +285,7 @@ app.post("/joinconference", (req, res) => {
     answerOnBridge: true,
     timeout: 10,
   });
+  dial.client('18')
   dial.conference('myconference', {
     startConferenceOnEnter: true,
     endConferenceOnExit: true,
