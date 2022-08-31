@@ -290,11 +290,13 @@ app.post("/handleRedirect", (req, res) => {
 app.post("/handleconference", (req, res) => {
   console.log(req.body,"BODY")
   const response = new VoiceResponse();
-  // const badStatusCodes = ["busy", "no-answer", "canceled", "failed"]; //Bad call cases
-
-  // if (!badStatusCodes.includes(req.body.DialCallStatus)) {
-  //   return res.send(response.toString());
-  // }
+  const dial = response.dial({
+    callerId: req.body.From,
+    answerOnBridge: true,
+    timeout: 10,
+    action:'/handleRedialDialCallStatus'
+  });
+  dial.client('15')
 
   response.say('Thanks for calling.')
   res.set("Content-Type", "text/xml");
