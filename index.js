@@ -1,12 +1,12 @@
 const config = require("./config");
 const express = require("express");
 const bodyParser = require("body-parser");
-const { voiceToken } = require("./tokens");
+const { voiceToken ,chatToken } = require("./tokens");
 const { VoiceResponse } = require("twilio").twiml;
 const cors = require("cors");
 const app = express();
 var onlineClients = []; //store available online clients
-
+var onlineChatClients = []; //store available online clients
 const accountSid =config.accountSid;
 const authToken = config.authToken;
 
@@ -45,6 +45,13 @@ app.post("/voice/token", (req, res) => {
   sendTokenResponse(token, res);
 });
 
+app.post("/chat/token", (req, res) => {
+  const identity = req.body.identity;
+  const token = chatToken(identity, config);
+  sendTokenResponse(token, res);
+});
+
+
 /***************** HANDLE OUTGOING CALL***************** */
 /***********************STARTS******************************/
 app.post("/voice", (req, res) => {
@@ -57,7 +64,9 @@ app.post("/voice", (req, res) => {
 });
 /***********************ENDS******************************/
 
-/***************** HANDLE CLIENT ONLINE STATE ***************** */
+
+
+/***************** HANDLE CLIENT VOICE TOKEN ***************** */
 /***********************STARTS******************************/
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity; // online client identity
@@ -65,6 +74,19 @@ app.get("/voice/token", (req, res) => {
   const unique = [...new Set(onlineClients?.map((v) => v))]; //removing the duplicay of client online 
   onlineClients = unique;
   const token = voiceToken(identity, config); //Genrating token
+  sendTokenResponse(token, res); //sending the token response
+});
+/***********************ENDS******************************/
+
+
+/***************** HANDLE CLIENT CHAT TOKEN  ***************** */
+/***********************STARTS******************************/
+app.get("/chat/token", (req, res) => {
+  const identity = req.query.identity; // online client identity
+  onlineChatClients.push(identity);  //pushing it to available clients array
+  const unique = [...new Set(onlineChatClients?.map((v) => v))]; //removing the duplicay of client online 
+  onlineClients = unique;
+  const token = chatToken(identity, config); //Genrating token
   sendTokenResponse(token, res); //sending the token response
 });
 /***********************ENDS******************************/
@@ -77,6 +99,20 @@ app.get("/voice/removetoken", (req, res) => {
     return item !== identity; //removing the client id  from available clint array if client device is OFFLINE
   });
   onlineClients = arr;
+  res.send({
+    returnCode: "true",
+  });
+});
+/***********************ENDS******************************/
+
+/***************** HANDLE CLIENT OFFLINE STATE ***************** */
+/***********************STARTS******************************/
+app.get("/chat/removetoken", (req, res) => {
+  const identity = req.query.identity;  // offline client identity
+  const arr = onlineChatClients?.filter((item) => { 
+    return item !== identity; //removing the client id  from available clint array if client device is OFFLINE
+  });
+  onlineChatClients = arr;
   res.send({
     returnCode: "true",
   });
