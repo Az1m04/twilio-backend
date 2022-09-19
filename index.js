@@ -1,7 +1,7 @@
 const config = require("./config");
 const express = require("express");
 const bodyParser = require("body-parser");
-const { voiceToken ,chatToken } = require("./tokens");
+const { voiceToken , chatToken } = require("./tokens");
 const { VoiceResponse } = require("twilio").twiml;
 const cors = require("cors");
 const app = express();
