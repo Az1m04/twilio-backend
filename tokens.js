@@ -1,6 +1,6 @@
 const twilio = require("twilio");
 const AccessToken = twilio.jwt.AccessToken;
-const { VoiceGrant } = AccessToken;
+const { VoiceGrant,ChatGrant } = AccessToken;
 
 const generateToken = (config) => {
   return new AccessToken(config.accountSid, config.apiKey, config.apiSecret);
@@ -25,3 +25,25 @@ const voiceToken = (identity, config) => {
 };
 
 module.exports = { voiceToken };
+
+
+const generateToken = () => {
+  return new AccessToken(
+    config.accountSid,
+    config.chatApiKey,
+    config.chatApiSecret
+  );
+};
+
+const chatToken = (identity) => {
+  let chatGrant;
+  chatGrant = new ChatGrant({
+    serviceSid: config.chatServiceSid
+  });
+  const token = generateToken()
+  token.addGrant(chatGrant);
+  token.identity = identity;
+  return token;
+};
+
+module.exports =  {chatToken}

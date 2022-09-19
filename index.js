@@ -219,7 +219,6 @@ app.post("/handleDialCallStatus", (req, res) => {
     response.redirect(`/handleRedirect?clientId=${clientIdFallback}`);   // redirect call if dialed input 0
   } else {
      // Record voicemail if client not available
-     console.log("MEHU")
     const gather = response.gather();
     gather.say(
       { voice: "alice" },
