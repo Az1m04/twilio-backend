@@ -47,13 +47,7 @@ app.post("/voice/token", (req, res) => {
 
 app.post("/chat/token", (req, res) => {
   const identity = req.body.identity;
-  const token = chatToken(identity, config);
-  const attributes={
-    name:"azim"
-  }
-  client.conversations.v1.users
-                       .create({identity}).attributes(attributes)
-                       
+  const token = chatToken(identity, config);                      
   sendTokenResponse(token, res);
 });
 
