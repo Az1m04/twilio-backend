@@ -40,7 +40,6 @@ const chatToken = (identity,config) => {
   const token = generateChatToken(config)
   token.addGrant(chatGrant);
   token.identity = identity;
-  token.attributes={userID:identity}
   return token;
 };
 

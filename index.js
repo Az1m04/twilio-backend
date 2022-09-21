@@ -48,6 +48,9 @@ app.post("/voice/token", (req, res) => {
 app.post("/chat/token", (req, res) => {
   const identity = req.body.identity;
   const token = chatToken(identity, config);
+  client.conversations.v1.users
+                       .create({identity})
+                       .then(user => console.log(user.sid));
   sendTokenResponse(token, res);
 });
 
