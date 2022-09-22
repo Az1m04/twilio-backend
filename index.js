@@ -99,7 +99,7 @@ app.get("/chat/token", (req, res) => {
 /***********************STARTS******************************/
 app.get("/chat/users", (req, res) => {
    
-  client.conversations.v1.users()
+  client.conversations.v1.users
   .fetch()
   .then(user => res.send({
     user,
