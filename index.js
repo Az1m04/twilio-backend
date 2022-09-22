@@ -109,8 +109,8 @@ app.get("/chat/users", (req, res) => {
 /***************** CHAT USERS ***************** */
 /***********************STARTS******************************/
 app.get("/chat/messages", (req, res) => {
-  const convSid=req?.body?.convSid
-  const msgSid=req?.body?.msgSid
+  const convSid=req?.query?.convSid
+  const msgSid=req?.query?.msgSid
   client.conversations.v1.u.conversations(convSid)
   .messages(msgSid)
   .deliveryReceipts
