@@ -95,10 +95,26 @@ app.get("/chat/token", (req, res) => {
 
 
 
-/***************** HANDLE CLIENT VOICE TOKEN ***************** */
+/***************** CHAT USERS ***************** */
 /***********************STARTS******************************/
 app.get("/chat/users", (req, res) => {
   client.conversations.v1.users.list({limit: 20})
+  .then(user => res.send({
+    users:user,
+    returnCode: "true",
+  }));
+});
+/***********************ENDS******************************/
+
+/***************** CHAT USERS ***************** */
+/***********************STARTS******************************/
+app.get("/chat/messages", (req, res) => {
+  const convSid=req?.body?.convSid
+  const msgSid=req?.body?.msgSid
+  client.conversations.v1.u.conversations(convSid)
+  .messages(msgSid)
+  .deliveryReceipts
+  .list({limit: 20})
   .then(user => res.send({
     users:user,
     returnCode: "true",
