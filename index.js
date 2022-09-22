@@ -98,14 +98,11 @@ app.get("/chat/token", (req, res) => {
 /***************** HANDLE CLIENT VOICE TOKEN ***************** */
 /***********************STARTS******************************/
 app.get("/chat/users", (req, res) => {
-   
-  client.conversations.v1.users
-  .fetch()
+  client.conversations.v1.users.list({limit: 20})
   .then(user => res.send({
-    user,
+    users:user,
     returnCode: "true",
   }));
-  
 });
 /***********************ENDS******************************/
 
