@@ -79,6 +79,8 @@ app.get("/voice/token", (req, res) => {
 /***********************ENDS******************************/
 
 
+
+
 /***************** HANDLE CLIENT CHAT TOKEN  ***************** */
 /***********************STARTS******************************/
 app.get("/chat/token", (req, res) => {
@@ -88,6 +90,22 @@ app.get("/chat/token", (req, res) => {
   onlineClients = unique;
   const token = chatToken(identity, config); //Genrating token
   sendTokenResponse(token, res); //sending the token response
+});
+/***********************ENDS******************************/
+
+
+
+/***************** HANDLE CLIENT VOICE TOKEN ***************** */
+/***********************STARTS******************************/
+app.get("/chat/users", (req, res) => {
+   
+  client.conversations.v1.users()
+  .fetch()
+  .then(user => res.send({
+    user,
+    returnCode: "true",
+  }));
+  
 });
 /***********************ENDS******************************/
 
