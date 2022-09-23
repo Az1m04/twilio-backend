@@ -101,7 +101,7 @@ app.get("/chat/token", (req, res) => {
                         users:user,
                         returnCode: "true",
                       }));
-  sendTokenResponse(token, res); //sending the token response
+  sendTokenResponse(token,meId ,res); //sending the token response
 });
 /***********************ENDS******************************/
 
