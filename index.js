@@ -86,12 +86,22 @@ app.get("/voice/token", (req, res) => {
 app.get("/chat/token", (req, res) => {
   const identity = req.query.identity; // online client identity
   const attributes=req.body
-  // const token = chatToken(identity,attributes ,config); //Genrating token
-  res.send({
-    users:attributes,
-    returnCode: "true",
-  })
-  // sendTokenResponse(token, res); //sending the token response
+  const token = chatToken(identity ,config); //Genrating token
+  
+  var meId=""
+  client.conversations.v1.users.list({limit: 20}).then(user =>{ 
+    const userSid= users.filter(u =>u?.identity===identity )[0]
+    meId=userSid?.sid
+   })
+   client.conversations.v1.users(meId)
+                       .update({
+                          attributes: attributes,
+                        })
+                       .then(user =>  res.send({
+                        users:user,
+                        returnCode: "true",
+                      }));
+  sendTokenResponse(token, res); //sending the token response
 });
 /***********************ENDS******************************/
 

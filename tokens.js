@@ -24,7 +24,7 @@ const voiceToken = (identity, config) => {
   return token;
 };
 
-const generateChatToken = (identity,attributes,config) => {
+const generateChatToken = (identity,config) => {
   return new AccessToken(
     config.accountSid,
     config.chatApiKey,
@@ -34,13 +34,12 @@ const generateChatToken = (identity,attributes,config) => {
   );
 };
 
-const chatToken = (identity,attributes,config) => {
+const chatToken = (identity,config) => {
   let chatGrant;
   chatGrant = new ChatGrant({
     serviceSid: config.chatServiceSid,
-    attributes:attributes
   });
-  const token = generateChatToken(identity,attributes,config)
+  const token = generateChatToken(identity,config)
   token.addGrant(chatGrant);
 
 
