@@ -98,7 +98,7 @@ app.post("/chat/updateUser/:id", (req, res) => {
 
   res.send({
                         param:req.param,
-                        body:req.body,
+                        body:req,
                         returnCode: "true",
                       })
     // client.conversations.v1.users.list({limit: 20}).then(user =>{ 
