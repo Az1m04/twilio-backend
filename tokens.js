@@ -24,22 +24,24 @@ const voiceToken = (identity, config) => {
   return token;
 };
 
-const generateChatToken = (config) => {
+const generateChatToken = (identity,attributes,config) => {
   return new AccessToken(
     config.accountSid,
     config.chatApiKey,
-    config.chatApiSecret
+    config.chatApiSecret,{
+       identity :identity,
+      attributes:attributes}
   );
 };
 
-const chatToken = (identity,config) => {
+const chatToken = (identity,attributes,config) => {
   let chatGrant;
   chatGrant = new ChatGrant({
     serviceSid: config.chatServiceSid
   });
-  const token = generateChatToken(config)
+  const token = generateChatToken(identity,attributes,config)
   token.addGrant(chatGrant);
-  token.identity = identity;
+
 
   return token;
 };

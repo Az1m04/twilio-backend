@@ -85,12 +85,9 @@ app.get("/voice/token", (req, res) => {
 /***********************STARTS******************************/
 app.get("/chat/token", (req, res) => {
   const identity = req.query.identity; // online client identity
-
-
-  const token = chatToken(identity, config); //Genrating token
   const attributes=req.body
-  client.conversations.v1.users
-                       .create({identity: identity,attributes})
+  const token = chatToken(identity,attributes ,config); //Genrating token
+  
   sendTokenResponse(token, res); //sending the token response
 });
 /***********************ENDS******************************/
