@@ -92,8 +92,8 @@ app.get("/chat/token", (req, res) => {
 
 if(token){
   client.conversations.v1.users.list({limit: 20}).then(user =>{ 
-    const data=users.filter(u =>u?.identity===identity )
-    meId.push(data)
+    // const data=users.filter(u =>u?.identity===identity )
+    meId.push(user)
    })
 }
   //  client.conversations.v1.users(meId)
