@@ -96,17 +96,17 @@ app.get("/chat/users/id", (req, res) => {
 
     client.conversations.v1.users.list({limit: 20}).then(user =>{ 
       const data=user.filter(u =>u?.identity===identity )
-      meId.push(data)
+      meId.push(...data)
      })
 
-       //  client.conversations.v1.users(meId)
-  //                      .update({
-  //                         attributes: { "name":"azim"},
-  //                       })
-  //                      .then(user =>  res.send({
-  //                       users:user,
-  //                       returnCode: "true",
-  //                     }));
+        // client.conversations.v1.users(meId)
+        //                .update({
+        //                   attributes: { "name":"azim"},
+        //                 })
+        //                .then(user =>  res.send({
+        //                 users:user,
+        //                 returnCode: "true",
+        //               }));
      res.send({
       meId,
       returnCode: "true",
