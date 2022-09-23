@@ -32,7 +32,7 @@ const generateChatToken = (config) => {
   );
 };
 
-const chatToken = (identity ,attributes,config) => {
+const chatToken = (identity,config) => {
   let chatGrant;
   chatGrant = new ChatGrant({
     serviceSid: config.chatServiceSid
@@ -40,7 +40,7 @@ const chatToken = (identity ,attributes,config) => {
   const token = generateChatToken(config)
   token.addGrant(chatGrant);
   token.identity = identity;
-  token.attributes=attributes;
+
   return token;
 };
 
