@@ -86,9 +86,12 @@ app.get("/voice/token", (req, res) => {
 app.get("/chat/token", (req, res) => {
   const identity = req.query.identity; // online client identity
   const attributes=req.body
-  const token = chatToken(identity,attributes ,config); //Genrating token
-  
-  sendTokenResponse(token, res); //sending the token response
+  // const token = chatToken(identity,attributes ,config); //Genrating token
+  res.send({
+    users:attributes,
+    returnCode: "true",
+  })
+  // sendTokenResponse(token, res); //sending the token response
 });
 /***********************ENDS******************************/
 
