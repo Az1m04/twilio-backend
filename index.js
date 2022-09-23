@@ -91,18 +91,20 @@ app.get("/chat/token", (req, res) => {
   sendTokenResponse(token ,res); //sending the token response
 });
 /***********************ENDS******************************/
-app.get("/chat/users/id", (req, res) => {
+app.get("/chat/updateUser",async (req, res) => {
   const identity = req.query.identity;
-
-    client.conversations.v1.users.list({limit: 20}).then(user =>{ 
+  const attributes=req.body.attributes
+  const friendlyName=req.body.friendlyName
+   await client.conversations.v1.users.list({limit: 20}).then(user =>{ 
       const data=user.filter(u =>u?.identity===identity )[0]
       meId=data?.sid
 
      })
 
-        client.conversations.v1.users(meId)
-                       .update({
-                          attributes: JSON.stringify({name:"azim"}),
+   await client.conversations.v1.users(meId)
+          .update({
+                        friendlyName:friendlyName,
+                          attributes: JSON.stringify(attributes),
                         })
                        .then(user =>  res.send({
                         users:user,
