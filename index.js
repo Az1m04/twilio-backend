@@ -9,7 +9,7 @@ var onlineClients = []; //store available online clients
 var onlineChatClients = []; //store available online clients
 const accountSid =config.accountSid;
 const authToken = config.authToken;
-
+var meId=[]
 const client = require('twilio')(accountSid, authToken);
 
 var allowedDomains = ["https://dev-01.speedum.tech", "http://localhost:3000"]; //allowed domains
@@ -89,9 +89,10 @@ app.get("/chat/token", (req, res) => {
   const attributes=req.body
   const token = chatToken(identity ,config); //Genrating token
   
-  var meId=[]
+
   client.conversations.v1.users.list({limit: 20}).then(user =>{ 
-    meId.push(users.filter(u =>u?.identity===identity ))
+    const data=users.filter(u =>u?.identity===identity )
+    meId.push(data)
    })
   //  client.conversations.v1.users(meId)
   //                      .update({
