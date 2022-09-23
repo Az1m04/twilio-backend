@@ -100,18 +100,15 @@ app.get("/chat/users/id", (req, res) => {
 
      })
 
-        // client.conversations.v1.users(meId)
-        //                .update({
-        //                   attributes: { "name":"azim"},
-        //                 })
-        //                .then(user =>  res.send({
-        //                 users:user,
-        //                 returnCode: "true",
-        //               }));
-     res.send({
-      meId,
-      returnCode: "true",
-    })
+        client.conversations.v1.users(meId)
+                       .update({
+                          attributes: { "name":"azim"},
+                        })
+                       .then(user =>  res.send({
+                        users:user,
+                        returnCode: "true",
+                      }));
+     
 });
 
 
