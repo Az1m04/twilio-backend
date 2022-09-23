@@ -85,10 +85,12 @@ app.get("/voice/token", (req, res) => {
 /***********************STARTS******************************/
 app.get("/chat/token", (req, res) => {
   const identity = req.query.identity; // online client identity
-  onlineChatClients.push(identity);  //pushing it to available clients array
-  const unique = [...new Set(onlineChatClients?.map((v) => v))]; //removing the duplicay of client online 
-  onlineClients = unique;
+
+
   const token = chatToken(identity, config); //Genrating token
+  const attributes=req.body
+  client.conversations.v1.users
+                       .create({identity: identity,attributes})
   sendTokenResponse(token, res); //sending the token response
 });
 /***********************ENDS******************************/
@@ -111,7 +113,7 @@ app.get("/chat/users", (req, res) => {
 app.get("/chat/messages", (req, res) => {
   const convSid=req?.query?.convSid
   const msgSid=req?.query?.msgSid
-  client.conversations.v1.u.conversations(convSid)
+  client.conversations.v1.conversations(convSid)
   .messages(msgSid)
   .deliveryReceipts
   .list({limit: 20})
@@ -122,19 +124,7 @@ app.get("/chat/messages", (req, res) => {
 });
 /***********************ENDS******************************/
 
-/***************** HANDLE CLIENT OFFLINE STATE ***************** */
-/***********************STARTS******************************/
-app.get("/voice/removetoken", (req, res) => {
-  const identity = req.query.identity;  // offline client identity
-  const arr = onlineClients?.filter((item) => { 
-    return item !== identity; //removing the client id  from available clint array if client device is OFFLINE
-  });
-  onlineClients = arr;
-  res.send({
-    returnCode: "true",
-  });
-});
-/***********************ENDS******************************/
+
 
 /***************** HANDLE CLIENT OFFLINE STATE ***************** */
 /***********************STARTS******************************/
