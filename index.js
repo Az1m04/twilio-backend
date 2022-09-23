@@ -89,19 +89,18 @@ app.get("/chat/token", (req, res) => {
   const attributes=req.body
   const token = chatToken(identity ,config); //Genrating token
   
-  var meId=""
+  var meId=[]
   client.conversations.v1.users.list({limit: 20}).then(user =>{ 
-    const userSid= users.filter(u =>u?.identity===identity )[0]
-    meId=userSid?.sid
+    meId.push(users.filter(u =>u?.identity===identity ))
    })
-   client.conversations.v1.users(meId)
-                       .update({
-                          attributes: { "name":"azim"},
-                        })
-                       .then(user =>  res.send({
-                        users:user,
-                        returnCode: "true",
-                      }));
+  //  client.conversations.v1.users(meId)
+  //                      .update({
+  //                         attributes: { "name":"azim"},
+  //                       })
+  //                      .then(user =>  res.send({
+  //                       users:user,
+  //                       returnCode: "true",
+  //                     }));
   sendTokenResponse(token,meId ,res); //sending the token response
 });
 /***********************ENDS******************************/
