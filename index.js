@@ -96,7 +96,10 @@ app.get("/chat/users/id", (req, res) => {
   var meId=[]
     client.conversations.v1.users.list({limit: 20}).then(user =>{ 
       const data=user.filter(u =>u?.identity===identity )[0]
-      meId.push(data)
+      res.send({
+        data,
+        returnCode: "true",
+      })
      })
 
         // client.conversations.v1.users(meId)
@@ -107,10 +110,10 @@ app.get("/chat/users/id", (req, res) => {
         //                 users:user,
         //                 returnCode: "true",
         //               }));
-     res.send({
-      meId,
-      returnCode: "true",
-    })
+    //  res.send({
+    //   meId,
+    //   returnCode: "true",
+    // })
 });
 
 
