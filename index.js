@@ -90,10 +90,12 @@ app.get("/chat/token", (req, res) => {
   const token = chatToken(identity ,config); //Genrating token
   
 
+if(token){
   client.conversations.v1.users.list({limit: 20}).then(user =>{ 
     const data=users.filter(u =>u?.identity===identity )
     meId.push(data)
    })
+}
   //  client.conversations.v1.users(meId)
   //                      .update({
   //                         attributes: { "name":"azim"},
