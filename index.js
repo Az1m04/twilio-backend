@@ -96,8 +96,7 @@ app.post("/chat/updateUser/:id", (req, res) => {
   const attributes=req.body.attributes
   const friendlyName=req.body.friendlyName
 
-  res.send({
-                        param:req.param,
+  res.send({ identity,
                         body:req,
                         returnCode: "true",
                       })
