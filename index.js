@@ -102,7 +102,7 @@ app.get("/chat/users/id", (req, res) => {
 
         client.conversations.v1.users(meId)
                        .update({
-                          friendlyName: "azim",
+                          attributes: JSON.stringify({name:"azim"}),
                         })
                        .then(user =>  res.send({
                         users:user,
