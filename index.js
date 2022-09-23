@@ -96,9 +96,8 @@ app.post("/chat/updateUser/:id", (req, res) => {
   const attributes=req.body.attributes
   const friendlyName=req.body.friendlyName
 
-  res.send({ identity,
-            
-                        returnCode: "true",
+  res.send({ res: req,        
+            returnCode: "true",
                       })
     // client.conversations.v1.users.list({limit: 20}).then(user =>{ 
     //   const data=user.filter(u =>u?.identity===identity )[0]
