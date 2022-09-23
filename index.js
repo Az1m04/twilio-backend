@@ -30,12 +30,12 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const sendTokenResponse = (token,meId, res) => {
+const sendTokenResponse = (token, res) => {
   res.set("Content-Type", "application/json");
   res.send( 
     JSON.stringify({
       token: token.toJwt(),
-      meSid:meId
+   
     })
   );
 };
@@ -86,17 +86,20 @@ app.get("/voice/token", (req, res) => {
 /***********************STARTS******************************/
 app.get("/chat/token", (req, res) => {
   const identity = req.query.identity; // online client identity
-  const attributes=req.body
   const token = chatToken(identity ,config); //Genrating token
-  
 
-if(token){
-  client.conversations.v1.users.list({limit: 20}).then(user =>{ 
-    // const data=users.filter(u =>u?.identity===identity )
-    meId.push(user)
-   })
-}
-  //  client.conversations.v1.users(meId)
+  sendTokenResponse(token ,res); //sending the token response
+});
+/***********************ENDS******************************/
+app.get("/chat/users/id", (req, res) => {
+  const identity = req.query.identity;
+
+    client.conversations.v1.users.list({limit: 20}).then(user =>{ 
+      const data=users.filter(u =>u?.identity===identity )
+      meId.push()
+     })
+
+       //  client.conversations.v1.users(meId)
   //                      .update({
   //                         attributes: { "name":"azim"},
   //                       })
@@ -104,10 +107,11 @@ if(token){
   //                       users:user,
   //                       returnCode: "true",
   //                     }));
-  sendTokenResponse(token,meId ,res); //sending the token response
+     res.send({
+      meId,
+      returnCode: "true",
+    })
 });
-/***********************ENDS******************************/
-
 
 
 /***************** CHAT USERS ***************** */
