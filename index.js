@@ -30,11 +30,12 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const sendTokenResponse = (token, res) => {
+const sendTokenResponse = (token,meId, res) => {
   res.set("Content-Type", "application/json");
-  res.send(
+  res.send( 
     JSON.stringify({
       token: token.toJwt(),
+      meSid:meId
     })
   );
 };
