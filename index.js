@@ -95,21 +95,27 @@ app.post("/chat/updateUser/:id", (req, res) => {
   const identity = req.param.id;
   const attributes=req.body.attributes
   const friendlyName=req.body.friendlyName
-    client.conversations.v1.users.list({limit: 20}).then(user =>{ 
-      const data=user.filter(u =>u?.identity===identity )[0]
-      meId=data?.sid
 
-     })
-
-    client.conversations.v1.users(meId)
-          .update({
-                        friendlyName:friendlyName,
-                          attributes: JSON.stringify(attributes),
-                        })
-                       .then(user =>  res.send({
-                        users:user,
+  res.send({
+                        param:req.param,
+                        body:req.body,
                         returnCode: "true",
-                      }));
+                      })
+    // client.conversations.v1.users.list({limit: 20}).then(user =>{ 
+    //   const data=user.filter(u =>u?.identity===identity )[0]
+    //   meId=data?.sid
+
+    //  })
+
+    // client.conversations.v1.users(meId)
+    //       .update({
+    //                     friendlyName:friendlyName,
+    //                       attributes: JSON.stringify(attributes),
+    //                     })
+    //                    .then(user =>  res.send({
+    //                     users:user,
+    //                     returnCode: "true",
+    //                   }));
      
 });
 
