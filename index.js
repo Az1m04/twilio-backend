@@ -95,7 +95,7 @@ app.get("/chat/token", (req, res) => {
    })
    client.conversations.v1.users(meId)
                        .update({
-                          attributes: attributes,
+                          attributes: { "name":"azim"},
                         })
                        .then(user =>  res.send({
                         users:user,
