@@ -91,8 +91,8 @@ app.get("/chat/token", (req, res) => {
   sendTokenResponse(token ,res); //sending the token response
 });
 /***********************ENDS******************************/
-app.get("/chat/updateUser", (req, res) => {
-  const identity = req.query.identity;
+app.post("/chat/updateUser/:id", (req, res) => {
+  const identity = req.param.id;
   const attributes=req.body.attributes
   const friendlyName=req.body.friendlyName
     client.conversations.v1.users.list({limit: 20}).then(user =>{ 
