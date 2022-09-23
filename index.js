@@ -1,16 +1,16 @@
 const config = require("./config");
 const express = require("express");
 const bodyParser = require("body-parser");
-const { voiceToken , chatToken } = require("./tokens");
+const { voiceToken, chatToken } = require("./tokens");
 const { VoiceResponse } = require("twilio").twiml;
 const cors = require("cors");
 const app = express();
 var onlineClients = []; //store available online clients
 var onlineChatClients = []; //store available online clients
-const accountSid =config.accountSid;
+const accountSid = config.accountSid;
 const authToken = config.authToken;
-var meId=""
-const client = require('twilio')(accountSid, authToken);
+var meId = "";
+const client = require("twilio")(accountSid, authToken);
 
 var allowedDomains = ["https://dev-01.speedum.tech", "http://localhost:3000"]; //allowed domains
 app.use(
@@ -32,10 +32,9 @@ app.use(bodyParser.json());
 
 const sendTokenResponse = (token, res) => {
   res.set("Content-Type", "application/json");
-  res.send( 
+  res.send(
     JSON.stringify({
       token: token.toJwt(),
-   
     })
   );
 };
@@ -48,10 +47,9 @@ app.post("/voice/token", (req, res) => {
 
 app.post("/chat/token", (req, res) => {
   const identity = req.body.identity;
-  const token = chatToken(identity, config);                      
+  const token = chatToken(identity, config);
   sendTokenResponse(token, res);
 });
-
 
 /***************** HANDLE OUTGOING CALL***************** */
 /***********************STARTS******************************/
@@ -65,97 +63,91 @@ app.post("/voice", (req, res) => {
 });
 /***********************ENDS******************************/
 
-
-
 /***************** HANDLE CLIENT VOICE TOKEN ***************** */
 /***********************STARTS******************************/
 app.get("/voice/token", (req, res) => {
   const identity = req.query.identity; // online client identity
-  onlineClients.push(identity);  //pushing it to available clients array
-  const unique = [...new Set(onlineClients?.map((v) => v))]; //removing the duplicay of client online 
+  onlineClients.push(identity); //pushing it to available clients array
+  const unique = [...new Set(onlineClients?.map((v) => v))]; //removing the duplicay of client online
   onlineClients = unique;
   const token = voiceToken(identity, config); //Genrating token
   sendTokenResponse(token, res); //sending the token response
 });
 /***********************ENDS******************************/
 
-
-
-
 /***************** HANDLE CLIENT CHAT TOKEN  ***************** */
 /***********************STARTS******************************/
 app.get("/chat/token", (req, res) => {
   const identity = req.query.identity; // online client identity
-  const token = chatToken(identity ,config); //Genrating token
+  const token = chatToken(identity, config); //Genrating token
 
-  sendTokenResponse(token ,res); //sending the token response
+  sendTokenResponse(token, res); //sending the token response
 });
 /***********************ENDS******************************/
-app.post("/chat/updateUser/:id", (req, res) => {
-  const identity = req.param.id;
-  const attributes=req.body.attributes
-  const friendlyName=req.body.friendlyName
+app.post("/chat/updateUser/:id", async (req, res) => {
+  const identity = req.params.id;
+  const attributes = req.body.attributes;
+  const friendlyName = req.body.friendlyName;
 
-  res.send({ identity,
-            
-                        returnCode: "true",
-                      })
-    // client.conversations.v1.users.list({limit: 20}).then(user =>{ 
-    //   const data=user.filter(u =>u?.identity===identity )[0]
-    //   meId=data?.sid
+  await client.conversations.v1.users.list({ limit: 20 }).then((user) => {
+    const data = user?.filter((u) => u?.identity === identity)[0];
+    meId = data?.sid;
+  });
 
-    //  })
-
-    // client.conversations.v1.users(meId)
-    //       .update({
-    //                     friendlyName:friendlyName,
-    //                       attributes: JSON.stringify(attributes),
-    //                     })
-    //                    .then(user =>  res.send({
-    //                     users:user,
-    //                     returnCode: "true",
-    //                   }));
-     
+  await client.conversations.v1
+    .users(meId)
+    .update({
+      friendlyName: friendlyName,
+      attributes: JSON.stringify(attributes),
+    })
+    .then((user) => {
+         meId = ""
+        res.send({
+          users: user,
+          meId,
+          returnCode: "true",
+        });
+    });
 });
-
 
 /***************** CHAT USERS ***************** */
 /***********************STARTS******************************/
 app.get("/chat/users", (req, res) => {
-  client.conversations.v1.users.list({limit: 20})
-  .then(user => res.send({
-    users:user,
-    returnCode: "true",
-  }));
+  client.conversations.v1.users.list({ limit: 20 }).then((user) =>
+    res.send({
+      users: user,
+      returnCode: "true",
+    })
+  );
 });
 /***********************ENDS******************************/
 
 /***************** CHAT USERS ***************** */
 /***********************STARTS******************************/
 app.get("/chat/messages", (req, res) => {
-  const convSid=req?.query?.convSid
-  const msgSid=req?.query?.msgSid
-  client.conversations.v1.conversations(convSid)
-  .messages(msgSid)
-  .deliveryReceipts
-  .list({limit: 20})
-  .then(user => res.send({
-    users:user,
-    returnCode: "true",
-  }));
+  const convSid = req?.query?.convSid;
+  const msgSid = req?.query?.msgSid;
+  client.conversations.v1
+    .conversations(convSid)
+    .messages(msgSid)
+    .deliveryReceipts.list({ limit: 20 })
+    .then((user) =>
+      res.send({
+        users: user,
+        returnCode: "true",
+      })
+    );
 });
 /***********************ENDS******************************/
 
-
-
 /***************** HANDLE CLIENT OFFLINE STATE ***************** */
 /***********************STARTS******************************/
-app.get("/chat/removetoken", (req, res) => {
-  const identity = req.query.identity;  // offline client identity
-  const arr = onlineChatClients?.filter((item) => { 
+app.get("/voice/removetoken", (req, res) => {
+  const identity = req.query.identity; // offline client identity
+  const arr = onlineClients?.filter((item) => {
     return item !== identity; //removing the client id  from available clint array if client device is OFFLINE
   });
-  onlineChatClients = arr;
+  onlineClients = arr;
   res.send({
     returnCode: "true",
   });
@@ -188,31 +180,31 @@ app.post("/voice/incoming", (req, res) => {
   gatherValue(); // gathering from user
 
   response.say("You have not daial any input. Please try again.");
-  
-  gatherValue();  // Retry gathering from user
-  
+
+  gatherValue(); // Retry gathering from user
+
   response.pause();
-  
+
   response.say("Thanks for calling."); //IF not input then calls  end
-  
+
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
 });
 /***********************ENDS******************************/
 
-
 /***************** HANDLE RESULTS OF GATHERD USERINPUT ***************** */
 /***********************STARTS******************************/
 app.post("/results", (req, res) => {
-  const userInput = req.body.Digits;  // user input value
+  const userInput = req.body.Digits; // user input value
   const response = new VoiceResponse();
 
-  const random = onlineClients[Math.floor(Math.random() * onlineClients.length)]; // Taking random available client
+  const random =
+    onlineClients[Math.floor(Math.random() * onlineClients.length)]; // Taking random available client
   const dial = response.dial({
-    callerId: req.body.From,  // getting call from user
+    callerId: req.body.From, // getting call from user
     answerOnBridge: true,
     timeout: 10, // dial timeout in seconds
-    action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${random}`,  // dial call action handler
+    action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${random}`, // dial call action handler
   });
   const gatherValue = () => {
     const gather = response.gather({
@@ -243,9 +235,7 @@ app.post("/results", (req, res) => {
     });
   };
 
-
-
-//Gather digit output results
+  //Gather digit output results
   switch (req.body.Digits) {
     case "0":
       if (onlineClients?.includes(random)) {
@@ -256,19 +246,19 @@ app.post("/results", (req, res) => {
       break;
     case "100":
       if (onlineClients?.includes("18")) {
-          dial.client("18");
+        dial.client("18");
       } else {
         callFallback();
       }
       break;
-      case "101":
-        dial.conference('myconference', {
-          startConferenceOnEnter: true,
-          endConferenceOnExit: true,
-          action:"/handleconference",
-          statusCallbackEvent: 'start end join leave mute hold'
-        });
-        break;
+    case "101":
+      dial.conference("myconference", {
+        startConferenceOnEnter: true,
+        endConferenceOnExit: true,
+        action: "/handleconference",
+        statusCallbackEvent: "start end join leave mute hold",
+      });
+      break;
     default:
       response.say("Sorry, I don't undersatand that choice.");
       response.say("Please try again.");
@@ -283,10 +273,10 @@ app.post("/results", (req, res) => {
 /***************** HANDLE DIAL CALL BACK  ***************** */
 /***********************STARTS******************************/
 app.post("/handleDialCallStatus", (req, res) => {
-  const clientIdFallback = req?.query?.clientId;    //client ID
-  const callerIdFallback = req?.query?.dialInput;       // dialed input 
+  const clientIdFallback = req?.query?.clientId; //client ID
+  const callerIdFallback = req?.query?.dialInput; // dialed input
   const response = new VoiceResponse();
-  
+
   const badStatusCodes = ["busy", "no-answer", "canceled", "failed"]; //Bad call cases
 
   if (!badStatusCodes.includes(req.body.DialCallStatus)) {
@@ -294,10 +284,10 @@ app.post("/handleDialCallStatus", (req, res) => {
   }
 
   if (callerIdFallback <= 0) {
-    response.say('Please hold the line.')
-    response.redirect(`/handleRedirect?clientId=${clientIdFallback}`);   // redirect call if dialed input 0
+    response.say("Please hold the line.");
+    response.redirect(`/handleRedirect?clientId=${clientIdFallback}`); // redirect call if dialed input 0
   } else {
-     // Record voicemail if client not available
+    // Record voicemail if client not available
     const gather = response.gather();
     gather.say(
       { voice: "alice" },
@@ -315,15 +305,13 @@ app.post("/handleDialCallStatus", (req, res) => {
 });
 /***********************ENDS******************************/
 
-
-
 /***************** HANDLE REDIRECT CALL ***************** */
 /***********************STARTS******************************/
 app.post("/handleRedirect", (req, res) => {
-  const callerIdFallback = req?.query?.clientId;  //Client Id who did not answer the call
+  const callerIdFallback = req?.query?.clientId; //Client Id who did not answer the call
   const response = new VoiceResponse();
 
-  //Removeing the client whot did not answer the call from available list 
+  //Removeing the client whot did not answer the call from available list
   const updateClient = onlineClients?.filter((item) => {
     return item !== callerIdFallback;
   });
@@ -332,15 +320,14 @@ app.post("/handleRedirect", (req, res) => {
     callerId: req.body.From,
     answerOnBridge: true,
     timeout: 10,
-    action:'/handleRedialDialCallStatus'
+    action: "/handleRedialDialCallStatus",
   });
 
   const random = updateClient[Math.floor(Math.random() * updateClient.length)]; // Taking random available client
   if (updateClient?.length > 0) {
-
-    dial.client(random);    // Redial to available clients
+    dial.client(random); // Redial to available clients
   } else {
-       // Record voicemail if client not available
+    // Record voicemail if client not available
     const gather = response.gather();
     gather.say(
       { voice: "alice" },
@@ -357,19 +344,18 @@ app.post("/handleRedirect", (req, res) => {
 
 /***********************ENDS******************************/
 
-
 /***************** HANDLE CONFERENCE CALL BACK  ***************** */
 /***********************STARTS******************************/
 app.post("/handleconference", (req, res) => {
-  console.log(">>>BODY",req.body)
+  console.log(">>>BODY", req.body);
   const response = new VoiceResponse();
   const dial = response.dial({
     callerId: req.body.From,
     answerOnBridge: true,
     timeout: 10,
   });
-  dial.client('15')
-  response.say('Thanks for calling.')
+  dial.client("15");
+  response.say("Thanks for calling.");
 
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
@@ -379,28 +365,26 @@ app.post("/handleconference", (req, res) => {
 /***************** HANDLE DIAL CALL BACK  ***************** */
 /***********************STARTS******************************/
 app.post("/handleRedialDialCallStatus", (req, res) => {
-
   const response = new VoiceResponse();
-  
+
   const badStatusCodes = ["busy", "no-answer", "canceled", "failed"]; //Bad call cases
 
   if (!badStatusCodes.includes(req.body.DialCallStatus)) {
     return res.send(response.toString());
   }
 
-  response.say('Thanks for calling.')
+  response.say("Thanks for calling.");
   res.set("Content-Type", "text/xml");
   res.send(response.toString());
 });
 /***********************ENDS******************************/
-
 
 // /***************** GET CALL RECORDINGS LOGS ***************** */
 // /***********************STARTS******************************/
 // app.get("/getRecordings", (req, res) => {
 //   client.recordings
 //   .list({limit: 20})
-//   .then(recordings => 
+//   .then(recordings =>
 //     res.json({
 //       success: true,
 //       message: "fetched successfully",
@@ -414,7 +398,7 @@ app.post("/handleRedialDialCallStatus", (req, res) => {
 // app.get("/callLogs", (req, res) => {
 //   client.calls
 //   .list({limit: 20})
-//   .then(call => 
+//   .then(call =>
 //     res.json({
 //       success: true,
 //       message: "fetched successfully",
@@ -429,16 +413,16 @@ app.post("/handleRedialDialCallStatus", (req, res) => {
 app.all("/voicemail", (req, res) => {
   const response = new VoiceResponse();
   client.recordings
-  .list({callSid: req.body.callSid, limit: 20})
-  .then(recordings => recordings.forEach(r => console.log(r.sid)));
-  response.say("Thank you for your message. Good bye.");  // recieved voice response message
+    .list({ callSid: req.body.callSid, limit: 20 })
+    .then((recordings) => recordings.forEach((r) => console.log(r.sid)));
+  response.say("Thank you for your message. Good bye."); // recieved voice response message
   response.hangup();
   res.send(response.toString());
 });
 
 /***********************ENDS******************************/
 
-const port = process.env.PORT || 8888;   //SET the server port
+const port = process.env.PORT || 8888; //SET the server port
 
 app.listen(port, () =>
   console.log(`Express server is running on localhost:${port}`)
