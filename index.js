@@ -95,8 +95,8 @@ app.get("/chat/users/id", (req, res) => {
   const identity = req.query.identity;
 
     client.conversations.v1.users.list({limit: 20}).then(user =>{ 
-      const data=users.filter(u =>u?.identity===identity )
-      meId.push(user)
+      const data=user.filter(u =>u?.identity===identity )
+      meId.push(data)
      })
 
        //  client.conversations.v1.users(meId)
