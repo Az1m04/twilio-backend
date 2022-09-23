@@ -30,14 +30,15 @@ const generateChatToken = (identity,attributes,config) => {
     config.chatApiKey,
     config.chatApiSecret,{
        identity :identity,
-      attributes:attributes}
+      }
   );
 };
 
 const chatToken = (identity,attributes,config) => {
   let chatGrant;
   chatGrant = new ChatGrant({
-    serviceSid: config.chatServiceSid
+    serviceSid: config.chatServiceSid,
+    attributes:attributes
   });
   const token = generateChatToken(identity,attributes,config)
   token.addGrant(chatGrant);
