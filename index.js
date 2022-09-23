@@ -97,7 +97,7 @@ app.post("/chat/updateUser/:id", (req, res) => {
   const friendlyName=req.body.friendlyName
 
   res.send({ identity,
-                        body:req,
+            
                         returnCode: "true",
                       })
     // client.conversations.v1.users.list({limit: 20}).then(user =>{ 
