@@ -12,7 +12,7 @@ const authToken = config.authToken;
 var meId = "";
 const client = require("twilio")(accountSid, authToken);
 
-var allowedDomains = ["https://dev-01.speedum.tech", "http://localhost:3000"]; //allowed domains
+var allowedDomains = ["https://dev-01.speedum.tech", "http://localhost:3000","https://media.us1.twilio.com","https://mcs.us1.twilio.com"]; //allowed domains
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -78,10 +78,19 @@ app.get("/voice/token", (req, res) => {
 /***************** HANDLE CLIENT CHAT TOKEN  ***************** */
 /***********************STARTS******************************/
 app.get("/chat/token", (req, res) => {
+ try{
   const identity = req.query.identity; // online client identity
   const token = chatToken(identity, config); //Genrating token
 
   sendTokenResponse(token, res); //sending the token response
+ }
+ catch (e) {
+  res.send({
+    message: e?.message,
+
+    returnCode: "error",
+  });
+ }
 });
 /***********************ENDS******************************/
 app.post("/chat/updateUser/:id", async (req, res) => {
@@ -101,13 +110,53 @@ app.post("/chat/updateUser/:id", async (req, res) => {
       attributes: JSON.stringify(attributes),
     })
     .then((user) => {
-         meId = ""
-        res.send({
-          users: user,
-          meId,
-          returnCode: "true",
-        });
+      meId = "";
+      res.send({
+        users: user,
+        meId,
+        returnCode: "true",
+      });
     });
+});
+
+
+app.post("/chat/updateSingleParti", async (req, res) => {
+  const partiSid = req.body.partiSid;
+  const convoSid = req.body.convoSid;
+  const attributes = req.body.attributes;
+
+
+    await client.conversations.v1
+      .conversations(convoSid)
+      .participants(partiSid)
+      .update({
+        attributes: JSON.stringify(attributes),
+  });
+  res.send({
+ 
+    returnCode: "true",
+  })
+
+});
+
+app.post("/chat/updateConvo", async (req, res) => {
+  const sids = req.body.sid;
+  const attributes = req.body.attributes;
+
+  sids.forEach(async (v) => {
+    const [convoSid, partiSid] = v?.split("~");
+    await client.conversations.v1
+      .conversations(convoSid)
+      .participants(partiSid)
+      .update({
+        attributes: JSON.stringify(attributes),
+      });
+  });
+  res.send({
+ 
+    returnCode: "true",
+  })
+
 });
 
 /***************** CHAT USERS ***************** */
@@ -347,7 +396,7 @@ app.post("/handleRedirect", (req, res) => {
 /***************** HANDLE CONFERENCE CALL BACK  ***************** */
 /***********************STARTS******************************/
 app.post("/handleconference", (req, res) => {
-  console.log(">>>BODY", req.body);
+
   const response = new VoiceResponse();
   const dial = response.dial({
     callerId: req.body.From,
