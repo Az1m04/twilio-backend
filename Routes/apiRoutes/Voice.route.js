@@ -1,0 +1,335 @@
+const router = require("express").Router();
+const config = require("../../config");
+const accountSid = config.accountSid;
+const authToken = config.authToken;
+const client = require("twilio")(accountSid, authToken);
+const { voiceToken } = require("../../tokens");
+const { VoiceResponse } = require("twilio").twiml;
+
+var onlineClients = []; 
+
+const sendTokenResponse = (token, res) => {
+    res.set("Content-Type", "application/json");
+    res.send(
+      JSON.stringify({
+        token: token.toJwt(),
+      })
+    );
+  };
+  
+  router.post("/token", (req, res) => {
+    const identity = req.body.identity;
+    const token = voiceToken(identity, config);
+    sendTokenResponse(token, res);
+  });
+
+
+  /***************** HANDLE OUTGOING CALL***************** */
+/***********************STARTS******************************/
+router.post("/", (req, res) => {
+  const To = req.body.To;
+  const response = new VoiceResponse();
+  const dial = response.dial({ callerId: config.callerId });
+  dial.number(To);
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString());
+});
+/***********************ENDS******************************/
+
+/***************** HANDLE CLIENT VOICE TOKEN ***************** */
+/***********************STARTS******************************/
+router.get("/token", (req, res) => {
+  const identity = req.query.identity; // online client identity
+  onlineClients.push(identity); //pushing it to available clients array
+  const unique = [...new Set(onlineClients?.map((v) => v))]; //removing the duplicay of client online
+  onlineClients = unique;
+  const token = voiceToken(identity, config); //Genrating token
+  sendTokenResponse(token, res); //sending the token response
+});
+/***********************ENDS******************************/
+
+
+/***************** HANDLE CLIENT OFFLINE STATE ***************** */
+/***********************STARTS******************************/
+router.get("/removetoken", (req, res) => {
+  const identity = req.query.identity; // offline client identity
+  const arr = onlineClients?.filter((item) => {
+    return item !== identity; //removing the client id  from available clint array if client device is OFFLINE
+  });
+  onlineClients = arr;
+  res.send({
+    returnCode: "true",
+  });
+});
+/***********************ENDS******************************/
+
+
+/***************** HANDLE INCOMING CALL ***************** */
+/***********************STARTS******************************/
+router.post("/incoming", (req, res) => {
+  const response = new VoiceResponse();
+  response.say({ voice: "alice" }, "Thank you for calling Health Vault.");
+  response.pause({ length: 2 });
+
+  //Gather input from the user
+  const gatherValue = () => {
+    const gather = response.gather({
+      input: "dtmf",
+      action: "/results",
+      timeout: "auto",
+    });
+    const say = gather.say({ voice: "alice" });
+    say.prosody(
+      {
+        rate: "x-slow", // voice speed
+      },
+      "Please dial the extension if you know or dial 0 to talk to our agent."
+    );
+  };
+
+  gatherValue(); // gathering from user
+
+  response.say("You have not daial any input. Please try again.");
+
+  gatherValue(); // Retry gathering from user
+
+  response.pause();
+
+  response.say("Thanks for calling."); //IF not input then calls  end
+
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString());
+});
+/***********************ENDS******************************/
+
+/***************** HANDLE RESULTS OF GATHERD USERINPUT ***************** */
+/***********************STARTS******************************/
+router.post("/results", (req, res) => {
+  const userInput = req.body.Digits; // user input value
+  const response = new VoiceResponse();
+
+  const random =
+    onlineClients[Math.floor(Math.random() * onlineClients.length)]; // Taking random available client
+  const dial = response.dial({
+    callerId: req.body.From, // getting call from user
+    answerOnBridge: true,
+    timeout: 10, // dial timeout in seconds
+    action: `/handleDialCallStatus?dialInput=${userInput}&clientId=${random}`, // dial call action handler
+  });
+  const gatherValue = () => {
+    const gather = response.gather({
+      input: "dtmf",
+      action: "/results",
+      timeout: "auto",
+    });
+    const say = gather.say({ voice: "alice" });
+    say.prosody(
+      {
+        rate: "x-slow",
+      },
+      "Please dial the extension if you know or dial 0 to talk to our agent."
+    );
+  };
+
+  //Voicemail response callback
+  const callFallback = () => {
+    const gather = response.gather();
+    gather.say(
+      { voice: "alice" },
+      "Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished."
+    );
+    response.record({
+      action: "/voicemail",
+      playBeep: true,
+      finishOnKey: "*",
+    });
+  };
+
+  //Gather digit output results
+  switch (req.body.Digits) {
+    case "0":
+      if (onlineClients?.includes(random)) {
+        dial.client(random);
+      } else {
+        callFallback();
+      }
+      break;
+    case "100":
+      if (onlineClients?.includes("18")) {
+        dial.client("18");
+      } else {
+        callFallback();
+      }
+      break;
+    case "101":
+      dial.conference("myconference", {
+        startConferenceOnEnter: true,
+        endConferenceOnExit: true,
+        action: "/handleconference",
+        statusCallbackEvent: "start end join leave mute hold",
+      });
+      break;
+    default:
+      response.say("Sorry, I don't undersatand that choice.");
+      response.say("Please try again.");
+      response.pause({ length: 1 });
+      gatherValue();
+      break;
+  }
+  res.send(response.toString());
+});
+/***********************ENDS******************************/
+
+/***************** HANDLE DIAL CALL BACK  ***************** */
+/***********************STARTS******************************/
+router.post("/handleDialCallStatus", (req, res) => {
+  const clientIdFallback = req?.query?.clientId; //client ID
+  const callerIdFallback = req?.query?.dialInput; // dialed input
+  const response = new VoiceResponse();
+
+  const badStatusCodes = ["busy", "no-answer", "canceled", "failed"]; //Bad call cases
+
+  if (!badStatusCodes.includes(req.body.DialCallStatus)) {
+    return res.send(response.toString());
+  }
+
+  if (callerIdFallback <= 0) {
+    response.say("Please hold the line.");
+    response.redirect(`/handleRedirect?clientId=${clientIdFallback}`); // redirect call if dialed input 0
+  } else {
+    // Record voicemail if client not available
+    const gather = response.gather();
+    gather.say(
+      { voice: "alice" },
+      "Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished."
+    );
+    response.record({
+      action: "/voicemail",
+      playBeep: true,
+      finishOnKey: "*",
+    });
+  }
+
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString());
+});
+/***********************ENDS******************************/
+
+/***************** HANDLE REDIRECT CALL ***************** */
+/***********************STARTS******************************/
+router.post("/handleRedirect", (req, res) => {
+  const callerIdFallback = req?.query?.clientId; //Client Id who did not answer the call
+  const response = new VoiceResponse();
+
+  //Removeing the client whot did not answer the call from available list
+  const updateClient = onlineClients?.filter((item) => {
+    return item !== callerIdFallback;
+  });
+
+  const dial = response.dial({
+    callerId: req.body.From,
+    answerOnBridge: true,
+    timeout: 10,
+    action: "/handleRedialDialCallStatus",
+  });
+
+  const random = updateClient[Math.floor(Math.random() * updateClient.length)]; // Taking random available client
+  if (updateClient?.length > 0) {
+    dial.client(random); // Redial to available clients
+  } else {
+    // Record voicemail if client not available
+    const gather = response.gather();
+    gather.say(
+      { voice: "alice" },
+      "Sorry, no one is available to take your call. Please leave a message at the beep.\nPress the star key when finished."
+    );
+    response.record({
+      action: "/voicemail",
+      playBeep: true,
+      finishOnKey: "*",
+    });
+  }
+  res.send(response.toString());
+});
+
+/***********************ENDS******************************/
+
+/***************** HANDLE CONFERENCE CALL BACK  ***************** */
+/***********************STARTS******************************/
+router.post("/handleconference", (req, res) => {
+
+  const response = new VoiceResponse();
+  const dial = response.dial({
+    callerId: req.body.From,
+    answerOnBridge: true,
+    timeout: 10,
+  });
+  dial.client("15");
+  response.say("Thanks for calling.");
+
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString());
+});
+/***********************ENDS******************************/
+
+/***************** HANDLE DIAL CALL BACK  ***************** */
+/***********************STARTS******************************/
+router.post("/handleRedialDialCallStatus", (req, res) => {
+  const response = new VoiceResponse();
+
+  const badStatusCodes = ["busy", "no-answer", "canceled", "failed"]; //Bad call cases
+
+  if (!badStatusCodes.includes(req.body.DialCallStatus)) {
+    return res.send(response.toString());
+  }
+
+  response.say("Thanks for calling.");
+  res.set("Content-Type", "text/xml");
+  res.send(response.toString());
+});
+/***********************ENDS******************************/
+
+// /***************** GET CALL RECORDINGS LOGS ***************** */
+// /***********************STARTS******************************/
+// router.get("/getRecordings", (req, res) => {
+//   client.recordings
+//   .list({limit: 20})
+//   .then(recordings =>
+//     res.json({
+//       success: true,
+//       message: "fetched successfully",
+//       recordings
+//     }));
+// });
+// /***********************ENDS******************************/
+
+// /***************** GET CALL LOGS ***************** */
+// /***********************STARTS******************************/
+// router.get("/callLogs", (req, res) => {
+//   client.calls
+//   .list({limit: 20})
+//   .then(call =>
+//     res.json({
+//       success: true,
+//       message: "fetched successfully",
+//       call
+//     }));
+// });
+// /***********************ENDS******************************/
+
+/***************** HANDLE VOICEMAIL ***************** */
+/***********************STARTS******************************/
+
+router.all("/voicemail", (req, res) => {
+  const response = new VoiceResponse();
+  client.recordings
+    .list({ callSid: req.body.callSid, limit: 20 })
+    .then((recordings) => recordings.forEach((r) => console.log(r.sid)));
+  response.say("Thank you for your message. Good bye."); // recieved voice response message
+  response.hangup();
+  res.send(response.toString());
+});
+
+/***********************ENDS******************************/
+
+module.exports = router;
