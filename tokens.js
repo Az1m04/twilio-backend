@@ -39,7 +39,6 @@ const chatToken = (identity,config) => {
   let chatGrant;
   chatGrant = new ChatGrant({
     serviceSid: config.chatServiceSid,
-    friendlyName:"Areeb"
   });
   const token = generateChatToken(identity,config)
   token.addGrant(chatGrant);
