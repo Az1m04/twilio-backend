@@ -148,27 +148,27 @@ app.post("/chat/updateUser/:id", async (req, res) => {
       meId = data?.sid;
     });
 
-    if(meId===""){
+    if (meId === "") {
       res.send({
-       message: "User not found",
+        message: "User not found",
         returnCode: "false",
       });
-    }
-else 
-    {await client.conversations.v1
-      .users(meId)
-      .update({
-        friendlyName: friendlyName,
-        attributes: JSON.stringify(attributes),
-      })
-      .then((user) => {
-        meId = meId;
-        res.send({
-          users: user,
-          meId,
-          returnCode: "true",
+    } else {
+      await client.conversations.v1
+        .users(meId)
+        .update({
+          friendlyName: friendlyName,
+          attributes: JSON.stringify(attributes),
+        })
+        .then((user) => {
+          meId = meId;
+          res.send({
+            users: user,
+            meId,
+            returnCode: "true",
+          });
         });
-      });}
+    }
   } catch (e) {
     res.send({
       message: e?.message,
@@ -182,16 +182,31 @@ app.post("/chat/updateSingleParti", async (req, res) => {
     const partiSid = req.body.partiSid;
     const convoSid = req.body.convoSid;
     const attributes = req.body.attributes;
+    var mePartiId = [];
 
     await client.conversations.v1
       .conversations(convoSid)
-      .participants(partiSid)
-      .update({
-        attributes: JSON.stringify(attributes),
+      .participants.list({ limit: 20 })
+      .then((participants) =>
+        participants.forEach((p) => mePartiId.push(p.sid))
+      );
+
+    if (mePartiId?.includes(partiSid)) {
+      await client.conversations.v1
+        .conversations(convoSid)
+        .participants(partiSid)
+        .update({
+          attributes: JSON.stringify(attributes),
+        });
+      res.send({
+        returnCode: "true",
       });
-    res.send({
-      returnCode: "true",
-    });
+    } else {
+      res.send({
+        message: "Participant not found",
+        returnCode: "false",
+      });
+    }
   } catch (e) {
     res.send({
       message: e?.message,
@@ -207,12 +222,12 @@ app.post("/chat/updateConvo", async (req, res) => {
 
     sids.forEach(async (v) => {
       const [convoSid, partiSid] = v?.split("~");
-      await client.conversations.v1
-        .conversations(convoSid)
-        .participants(partiSid)
-        .update({
-          attributes: JSON.stringify(attributes),
-        });
+        await client.conversations.v1
+          .conversations(convoSid)
+          .participants(partiSid)
+          .update({
+            attributes: JSON.stringify(attributes),
+          });
     });
     res.send({
       returnCode: "true",
