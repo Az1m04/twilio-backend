@@ -183,7 +183,6 @@ app.post("/chat/updateSingleParti", async (req, res) => {
     const convoSid = req.body.convoSid;
     const attributes = req.body.attributes;
     var mePartiId = [];
-
     await client.conversations.v1
       .conversations(convoSid)
       .participants.list({ limit: 20 })
@@ -198,6 +197,37 @@ app.post("/chat/updateSingleParti", async (req, res) => {
         .update({
           attributes: JSON.stringify(attributes),
         });
+      res.send({
+        returnCode: "true",
+      });
+    } else {
+      res.send({
+        message: "Participant not found",
+        returnCode: "false",
+      });
+    }
+  } catch (e) {
+    res.send({
+      message: e?.message,
+      returnCode: "false",
+    });
+  }
+});
+
+
+app.post("/chat/updateParti", async (req, res) => {
+  try {
+    const partiSid = req.body.partiSid;
+    const convoSid = req.body.convoSid;
+    const attributes = req.body.attributes;
+
+    if (partiSid) {
+      await client.conversations.v1
+        .conversations(convoSid)
+        .participants(partiSid)
+        .update({
+          attributes: JSON.stringify(attributes),
+        })
       res.send({
         returnCode: "true",
       });
