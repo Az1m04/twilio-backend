@@ -15,6 +15,7 @@ const client = require("twilio")(accountSid, authToken);
 var allowedDomains = [
   "https://dev-01.speedum.tech",
   "http://localhost:3000",
+  "http://localhost:3001",
   "https://media.us1.twilio.com",
   "https://mcs.us1.twilio.com",
 ]; //allowed domains
@@ -136,6 +137,23 @@ app.get("/chat/token", (req, res) => {
     });
   }
 });
+
+app.get("/reachability",(req,res)=>{
+try{
+  client.conversations.v1.services(config?.chatServiceSid)
+  .configuration()
+  .update({reachabilityEnabled: true})
+  .then(() =>res.send({
+    returnCode: "true",
+  }))
+}
+catch (e) {
+  res.send({
+    message: e?.message,
+    returnCode: "false",
+  })}
+}
+)
 /***********************ENDS******************************/
 app.post("/chat/updateUser/:id", async (req, res) => {
   try {
@@ -222,15 +240,14 @@ app.post("/chat/updateParti", async (req, res) => {
     const attributes = req.body.attributes;
 
     if (partiSid) {
-      await client.conversations.v1
+         await client.conversations.v1
         .conversations(convoSid)
         .participants(partiSid)
         .update({
           attributes: JSON.stringify(attributes),
-        })
-      res.send({
-        returnCode: "true",
-      });
+        }).then(res=>res.send({
+          returnCode: "true",
+        }))
     } else {
       res.send({
         message: "Participant not found",

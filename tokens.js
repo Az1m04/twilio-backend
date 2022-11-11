@@ -30,7 +30,7 @@ const generateChatToken = (identity,config) => {
     config.chatApiKey,
     config.chatApiSecret,{
        identity :identity,
-   
+      //  ttl:200
       }
   );
 };
